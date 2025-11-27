@@ -11,7 +11,7 @@ COPY server.js package.json ./
 RUN npm install
 
 # Set up the environment variable for the port
-ENV PORT=3000
+ENV PORT=3001
 
 # Start the server when launching the container
 CMD ["node", "server.js"]
