@@ -2,4 +2,3 @@ part1/example*
 part1/the-project/node_modules/
 part1/the-project/.env
 part1/the-project/package-lock.json
-notes.md
