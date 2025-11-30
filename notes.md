@@ -1,6 +1,6 @@
 # Notes
 
-These notes are gathered from the [Devops with Kubernetes MOOC course material](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes) and the related documentation. All rights are on the original authors.
+These notes are gathered from the [Devops with Kubernetes MOOC course material](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes) and the related documentation. _All rights are on the original authors._
 
 ## [Chapter 2 - Kubernetes Basics](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-2)
 
@@ -85,7 +85,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exampl
   deployment.apps/hashgenerator-dep created
 ```
 
-[Docker-cli into kubectl commands](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
+Comparing docker and kubectl commands: [Docker-cli into kubectl commands](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
 
 Deployment workflow (for now, will be adjusted in the future):
 
@@ -229,3 +229,65 @@ kubectl delete pods --all
 # Delete all pods only if the user confirms the deletion
 kubectl delete pods --all --interactive
 ```
+
+#### Describe
+
+- [Lens - Powertool for Kubernetes observability](https://lenshq.io)
+- [Getting started](https://docs.k8slens.dev/k8slens/getting-started/)
+
+Inspecting a deployment.
+
+```shell
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app1/manifests/deployment.yaml
+  deployment.apps/hashgenerator-dep created
+
+$ kubectl describe deployment hashgenerator-dep
+  Name:                   hashgenerator-dep
+  Namespace:              default
+  CreationTimestamp:      Thu, 20 Mar 2025 13:59:42 +0200
+  Labels:                 <none>
+  Annotations:            deployment.kubernetes.io/revision: 1
+  Selector:               app=hashgenerator
+  Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+  StrategyType:           RollingUpdate
+  MinReadySeconds:        0
+  RollingUpdateStrategy:  25% max unavailable, 25% max surge
+  Pod Template:
+    Labels:  app=hashgenerator
+    Containers:
+     hashgenerator:
+      Image:        jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
+      Port:         <none>
+      Host Port:    <none>
+      Environment:  <none>
+      Mounts:       <none>
+    Volumes:        <none>
+  Conditions:
+    Type           Status  Reason
+    ----           ------  ------
+    Available      True    MinimumReplicasAvailable
+    Progressing    True    NewReplicaSetAvailable
+  OldReplicaSets:  <none>
+  NewReplicaSet:   hashgenerator-dep-75bdcc94c (1/1 replicas created)
+  Events:
+    Type    Reason             Age    From                   Message
+    ----    ------             ----   ----                   -------
+    Normal  ScalingReplicaSet  8m39s  deployment-controller  Scaled up replica set hashgenerator-dep-75bdcc94c to 1
+```
+
+Inspecting a pod.
+
+```shell
+$ kubectl describe pod hashgenerator-dep-75bdcc94c-whwsm
+  ...
+  Events:
+    Type    Reason     Age   From                              Message
+    ----    ------     ----  ----                              -------
+    Normal  Scheduled  26s   default-scheduler  Successfully assigned default/hashgenerator-dep-7877df98df-qmck9 to k3d-k3s-default-server-0
+    Normal  Pulling    15m   kubelet            Pulling image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
+    Normal  Pulled     26s   kubelet            Container image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
+    Normal  Created    26s   kubelet            Created container hashgenerator
+    Normal  Started    26s   kubelet            Started container hashgenerator
+```
+
+### [Part 3: Introduction to Networking](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-2/introduction-to-networking)
