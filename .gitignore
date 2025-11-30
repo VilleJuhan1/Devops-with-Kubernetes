@@ -1,5 +1,5 @@
 part1/example*
-part1/2-the-project-step-1/node_modules/
-part1/2-the-project-step-1/.env
-part1/2-the-project-step-1/package-lock.json
+part1/the-project/node_modules/
+part1/the-project/.env
+part1/the-project/package-lock.json
 notes.md

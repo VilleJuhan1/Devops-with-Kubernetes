@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serverino-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serverino
+  template:
+    metadata:
+      labels:
+        app: serverino
+    spec:
+      containers:
+        - name: serverino
+          image: villejuhan1/serverino:1_2
+          ports:
+            - containerPort: 3001
