@@ -290,4 +290,50 @@ $ kubectl describe pod hashgenerator-dep-75bdcc94c-whwsm
     Normal  Started    26s   kubelet            Started container hashgenerator
 ```
 
+Reviewing logs (Use -f for follow).
+
+```shell
+$ kubectl logs hashgenerator-dep-75bdcc94c-whwsm
+  jst944
+  3c2xas
+  s6ufaj
+  cq7ka6
+```
+
 ### [Part 3: Introduction to Networking](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-2/introduction-to-networking)
+
+Configuring port-forwarding (not for production use, but useful for debugging)
+
+```shell
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
+  deployment.apps/hashresponse-dep created
+
+$ kubectl get pods
+  NAME                                READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-5cbbf97d5-z2ct9   1/1     Running   0          20h
+  hashresponse-dep-57bcc888d7-dj5vk   1/1     Running   0          19h
+
+$ kubectl port-forward hashresponse-dep-57bcc888d7-dj5vk 3003:3000
+  Forwarding from 127.0.0.1:3003 -> 3000
+  Forwarding from [::1]:3003 -> 3000
+```
+
+[Setting up environmental variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
+
+```shell
+apiVersion: v1
+kind: Pod
+metadata:
+  name: envar-demo
+  labels:
+    purpose: demonstrate-envars
+spec:
+  containers:
+  - name: envar-demo-container
+    image: gcr.io/google-samples/hello-app:2.0
+    env:
+    - name: DEMO_GREETING
+      value: "Hello from the environment"
+    - name: DEMO_FAREWELL
+      value: "Such a sweet sorrow"
+```
