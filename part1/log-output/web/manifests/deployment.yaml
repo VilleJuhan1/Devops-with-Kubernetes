@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output-web-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output-web
+  template:
+    metadata:
+      labels:
+        app: log-output-web
+    spec:
+      containers:
+        - name: log-output-web
+          image: villejuhan1/log-output:web
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081

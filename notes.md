@@ -386,3 +386,71 @@ $ kubectl apply -f manifests/service.yaml
 ```
 
 _As we've published 8082 as 30080 we can access it now via http://localhost:8082. We've now defined a nodeport with type: NodePort. [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport) are simply ports that are opened by Kubernetes to all of the nodes and the service will handle requests in that port. NodePorts are not flexible and require you to assign a different port for every application. As such NodePorts are not used in production but are helpful to know about._
+
+#### Ingress
+
+While services work on Transport layer (L4), Ingresses work on Application (L7) layer, check [OSI model](https://en.wikipedia.org/wiki/OSI_model) for more details. _Ingresses are implemented by various different "controllers". This means that ingresses do not automatically work in a cluster, but give you the freedom of choosing which Ingress controller works for you the best. K3s has [Traefik](https://containo.us/traefik/) installed already._
+
+Creating an Ingress resource:
+
+```shell
+$ kubectl delete -f manifests/service.yaml
+  service "hashresponse-svc" deleted
+```
+
+\_A [ClusterIP](https://kubernetes.io/docs/concepts/services-networking/service/#type-clusterip) type Service resource gives the Service an internal IP that'll be accessible within the cluster.
+
+The following service.yaml definition will let TCP traffic from port 2345 to port 3000:\_
+
+```shell
+apiVersion: v1
+kind: Service
+metadata:
+  name: hashresponse-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: hashresponse
+  ports:
+    - port: 2345
+      protocol: TCP
+      targetPort: 3000
+```
+
+Creating the new ingress:
+
+```shell
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dwk-material-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hashresponse-svc
+            port:
+              number: 2345
+```
+
+Apply and view the results:
+
+```shell
+$ kubectl apply -f manifests
+  ingress.networking.k8s.io/dwk-material-ingress created
+  service/hashresponse-svc configured
+
+$ kubectl get svc,ing
+  NAME                       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+  service/kubernetes         ClusterIP   10.43.0.1    <none>        443/TCP    5m22s
+  service/hashresponse-svc   ClusterIP   10.43.0.61   <none>        2345/TCP   45s
+
+  NAME                                             CLASS    HOSTS   ADDRESS                            PORTS   AGE
+  ingress.networking.k8s.io/dwk-material-ingress   <none>   *       172.21.0.3,172.21.0.4,172.21.0.5   80      16s
+```
+
+The end result is that we should be able to access the application on localhost port 8081, which we defined while creating the cluster.
