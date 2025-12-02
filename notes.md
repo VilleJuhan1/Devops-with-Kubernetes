@@ -337,3 +337,52 @@ spec:
     - name: DEMO_FAREWELL
       value: "Such a sweet sorrow"
 ```
+
+_K3d [documentation](https://k3d.io/v5.3.0/usage/commands/k3d_cluster_create/) tells us how the ports are opened, we'll open local 8081 to 80 in k3d-k3s-default-serverlb and local 8082 to 30080 in k3d-k3s-default-agent-0. The 30080 is chosen almost completely randomly, but needs to be a value between 30000-32767 for the next step:_
+
+```shell
+$ k3d cluster delete
+  INFO[0000] Deleting cluster 'k3s-default'
+  ...
+  INFO[0002] Successfully deleted cluster k3s-default!
+
+$ k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
+  INFO[0000] Created network 'k3d-k3s-default'
+  ...
+  INFO[0021] Cluster 'k3s-default' created successfully!
+  INFO[0021] You can now use it like this:
+  kubectl cluster-info
+
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
+  deployment.apps/hashresponse-dep created
+```
+
+#### Services
+
+_[Service](https://kubernetes.io/docs/concepts/services-networking/service/) resources are essential for managing the application's accessibility, ensuring that it can be reached by connections originating both outside the cluster and from within. These resources handle the routing and load balancing necessary to maintain seamless communication with the application, regardless of the dynamic nature of pod creation and termination._
+
+Creating a service for the hashresponse deployment:
+
+```shell
+apiVersion: v1
+kind: Service
+metadata:
+  name: hashresponse-svc
+spec:
+  type: NodePort
+  selector:
+    app: hashresponse # This is the app as declared in the deployment.
+  ports:
+    - name: http
+      nodePort: 30080 # This is the port that is available outside. Value for nodePort can be between 30000-32767
+      protocol: TCP
+      port: 1234 # This is a port that is available to the cluster, in this case it can be ~ anything
+      targetPort: 3000 # This is the target port
+```
+
+```shell
+$ kubectl apply -f manifests/service.yaml
+  service/hashresponse-svc created
+```
+
+_As we've published 8082 as 30080 we can access it now via http://localhost:8082. We've now defined a nodeport with type: NodePort. [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport) are simply ports that are opened by Kubernetes to all of the nodes and the service will handle requests in that port. NodePorts are not flexible and require you to assign a different port for every application. As such NodePorts are not used in production but are helpful to know about._
