@@ -454,3 +454,15 @@ $ kubectl get svc,ing
 ```
 
 The end result is that we should be able to access the application on localhost port 8081, which we defined while creating the cluster.
+
+Deleting deployments, services etc. that are not necessary anymore (in this case log-output):
+
+```shell
+kubectl get deployments
+kubectl get services
+kubectl delete service log-output-web-svc
+kubectl get ingress
+kubectl delete ingress log-output-ingress
+kubectl cluster-info
+docker ps
+```

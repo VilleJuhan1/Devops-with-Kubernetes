@@ -13,3 +13,4 @@ The link to the present release might be absent from the release itself but is p
 - [v0.1.5 The project, step 3](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.5)
 - [v0.1.6 The project, step 4](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.6)
 - [v0.1.7 External access with Ingress](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.7)
+- [v0.1.8 The project, step 5](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.8)
