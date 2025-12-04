@@ -1,16 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: log-output-ingress
+  name: serverino-ingress
 spec:
   ingressClassName: traefik
   rules:
     - http:
         paths:
-          - path: /status
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: log-output-web-svc
+                name: serverino-svc
                 port:
                   number: 2345
