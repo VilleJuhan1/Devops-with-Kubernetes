@@ -466,3 +466,31 @@ kubectl delete ingress log-output-ingress
 kubectl cluster-info
 docker ps
 ```
+
+Creating a shared ingress, more info on ingresses [here](https://kubernetes.io/docs/concepts/services-networking/ingress/):
+
+```shell
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-fanout-example
+spec:
+  rules:
+  - host: foo.bar.com
+    http:
+      paths:
+      - path: /foo
+        pathType: Prefix
+        backend:
+          service:
+            name: service1
+            port:
+              number: 4200
+      - path: /bar
+        pathType: Prefix
+        backend:
+          service:
+            name: service2
+            port:
+              number: 8080
+```
