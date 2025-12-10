@@ -7,5 +7,11 @@ WORKDIR /app
 # Copy the script into the container
 COPY app.py .
 
+# Initialize a log file
+RUN mkdir /shared && touch /shared/app.log
+
+# Set environment variable for shared log path
+ENV LOG_PATH=/shared/app.log
+
 # Run the Python script unbuffered so that the output is printed immediately
-CMD ["python", "-u", "app.py"]
+CMD ["python", "app.py"]

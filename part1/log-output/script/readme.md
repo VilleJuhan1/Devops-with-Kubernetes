@@ -1,1 +1,3 @@
-This is the base for [villejuhan1/log-output:1_1](https://hub.docker.com/repository/docker/villejuhan1/log-output/tags/1_1/sha256-e8a264a9770daaab14d559a54f5498d51c538e177f027372a31251baa6fbba94), which is a simple Python framework for a pseudo log-output app. The fork was created due to need to expose it as a web service, ie. [log-output:web](https://hub.docker.com/repository/docker/villejuhan1/log-output/tags/web/sha256-25389e76c20a8c5f85e2a191dceba8058dd3301adbadd663073311ae38759b03).
+# Logger
+
+This app logs a random string with a timestamp into stdout which is forwarded into the log file /log/app.log. Dockerhub image is _villejuhan1/log-output:logger_.

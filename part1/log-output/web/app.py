@@ -1,27 +1,26 @@
-import random
-import string
-import datetime
+import os
 from flask import Flask
 from flask import jsonify
 
 # We decided to go with Python, so let's continue with Flask as well
 app = Flask(__name__)
 
-# Create a random string of given length, default into 15 characters
-def randomString(length=15):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length))
-
 # Create a web endpoint for the log output
-@app.route("/status")
-def status():
-    timestamp = datetime.datetime.now().isoformat(
-            timespec='seconds'
-        )  
-    return jsonify({
-        "timestamp": timestamp,
-        "random_string": randomString()
-    })
+@app.route("/logs")
+def logs():
+    log_path = os.getenv("LOG_PATH", "../script/log/app.log") # default path for development
+    try:
+        with open(log_path, "r") as f:
+            logs = []
+            line_counter = 0
+            for line in f:
+                line = line.rstrip("\n")
+                if line_counter != 0:   # Skip the first line which is just "Started logging"
+                    logs.append(line)
+                line_counter += 1
+        return jsonify({"100 latest log entries": logs[-100:]})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8081)

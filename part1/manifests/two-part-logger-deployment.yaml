@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: images-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: images
+  template:
+    metadata:
+      labels:
+        app: images
+    spec:
+      volumes: # Define volume
+        - name: shared-image
+          emptyDir: {}
+      containers:
+        - name: logger
+          image: villejuhan1/log-output:1_3
+          volumeMounts: # Mount volume
+            - name: log-data
+              mountPath: /app/log/
+        - name: log-response
+          image: villejuhan1/log-output-web:1_3
+          volumeMounts: # Mount volume
+            - name: log-data
+              mountPath: /app/log/

@@ -494,3 +494,38 @@ spec:
             port:
               number: 8080
 ```
+
+### [Part 4: Introduction to Storage](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-2/introduction-to-storage)
+
+Shared deployment with shared emptyDir volume (persists through restarts but disappears after pods go down):
+
+```shell
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: images-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: images
+  template:
+    metadata:
+      labels:
+        app: images
+    spec:
+      volumes: # Define volume
+        - name: shared-image
+          emptyDir: {}
+      containers:
+        - name: image-finder
+          image: jakousa/dwk-app3-image-finder:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
+          volumeMounts: # Mount volume
+          - name: shared-image
+            mountPath: /usr/src/app/files
+        - name: image-response
+          image: jakousa/dwk-app3-image-response:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
+          volumeMounts: # Mount volume
+          - name: shared-image
+            mountPath: /usr/src/app/files
+```
