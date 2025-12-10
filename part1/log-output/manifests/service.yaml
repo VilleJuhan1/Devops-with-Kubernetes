@@ -5,7 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: log-output-web
+    app: log-output
   ports:
     - port: 2346
       protocol: TCP
