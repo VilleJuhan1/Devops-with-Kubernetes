@@ -15,14 +15,21 @@ spec:
       volumes: # Define volume
         - name: log-data
           emptyDir: {}
+        - name: ping-pong-log-output-pv
+          persistentVolumeClaim:
+            claimName: ping-pong-log-output-volume
       containers:
         - name: logger
           image: villejuhan1/log-output:logger
+          imagePullPolicy: Always
           volumeMounts: # Mount volume
             - name: log-data
-              mountPath: /shared
+              mountPath: /log
         - name: log-response
           image: villejuhan1/log-output:reader
+          imagePullPolicy: Always
           volumeMounts: # Mount volume
             - name: log-data
+              mountPath: /log
+            - name: ping-pong-log-output-pv
               mountPath: /shared

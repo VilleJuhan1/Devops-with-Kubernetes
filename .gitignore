@@ -4,3 +4,4 @@ part1/the-project/.env
 part1/the-project/package-lock.json
 part1/log-output/web/venv/
 part1/log-output/script/app/
+part1/ping-pong/venv/

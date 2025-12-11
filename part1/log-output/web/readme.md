@@ -5,5 +5,5 @@ Ensure you're in the /part1/log-output/web directory. Create the Python virtual 
 ```shell
 python3 -m venv venv
 source venv/bin/activate
-pip install requirements.txt
+pip install -r requirements.txt
 ```

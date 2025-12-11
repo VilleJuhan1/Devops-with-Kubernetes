@@ -8,10 +8,10 @@ WORKDIR /app
 COPY app.py .
 
 # Initialize a log file
-RUN mkdir /shared && touch /shared/app.log
+RUN mkdir /log && touch /log/app.log
 
 # Set environment variable for shared log path
-ENV LOG_PATH=/shared/app.log
+ENV LOG_PATH=/log/app.log
 
 # Run the Python script unbuffered so that the output is printed immediately
 CMD ["python", "app.py"]

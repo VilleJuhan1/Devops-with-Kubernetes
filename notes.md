@@ -529,3 +529,69 @@ spec:
           - name: shared-image
             mountPath: /usr/src/app/files
 ```
+
+#### Persistent volume
+
+Example persistentvolume.yaml
+
+```shell
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  storageClassName: my-example-pv # this is the name you are using later to claim this volume
+  capacity:
+    storage: 1Gi # Could be e.q. 500Gi. Small amount is to preserve space when testing locally
+  volumeMode: Filesystem # This declares that it will be mounted into pods as a directory
+  accessModes:
+  - ReadWriteOnce
+  local:
+    path: /tmp/kube
+  nodeAffinity: ## This is only required for local, it defines which nodes can access it
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k3d-k3s-default-agent-0
+```
+
+To use persistent volume, a pod needs to claim it using a persistent volume claim, ie. persistenvolumeclaim.yaml
+
+```shell
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: image-claim # name of the volume claim, this will be used in the deployment
+spec:
+  storageClassName: my-example-pv # this is the name of the persistent volume we are claiming
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+Also the pod deployment must be configured to use the PVC
+
+```shell
+# ...
+    spec:
+      volumes:
+        - name: shared-image
+          persistentVolumeClaim:
+            claimName: image-claim
+      containers:
+        - name: image-finder
+          image: jakousa/dwk-app3-image-finder:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
+          volumeMounts:
+          - name: shared-image # PVC name
+            mountPath: /usr/src/app/files
+        - name: image-response
+          image: jakousa/dwk-app3-image-response:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
+          volumeMounts:
+          - name: shared-image # PVC name
+            mountPath: /usr/src/app/files
+```

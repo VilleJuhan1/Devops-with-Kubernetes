@@ -12,9 +12,16 @@ spec:
       labels:
         app: ping-pong
     spec:
+      volumes:
+        - name: ping-pong-log-output-pv
+          persistentVolumeClaim:
+            claimName: ping-pong-log-output-volume
       containers:
         - name: ping-pong
-          image: villejuhan1/ping-pong:latest
+          image: villejuhan1/ping-pong:pv
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
+          volumeMounts:
+            - name: ping-pong-log-output-pv
+              mountPath: /shared

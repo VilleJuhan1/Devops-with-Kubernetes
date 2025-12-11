@@ -8,18 +8,16 @@ app = Flask(__name__)
 # Create a web endpoint for the log output
 @app.route("/logs")
 def logs():
-    log_path = os.getenv("LOG_PATH", "../script/log/app.log") # default path for development
+    log_path = os.getenv("LOG_PATH", "../script/log/app.log") + "/app.log"  # default path for development
     try:
-        with open(log_path, "r") as f:
-            logs = []
-            line_counter = 0
-            for line in f:
-                line = line.rstrip("\n")
-                if line_counter != 0:   # Skip the first line which is just "Started logging"
-                    logs.append(line)
-                line_counter += 1
-        # The format is pretty bad at the moment, but the log format is not ready either so keep it this way for testing
-        return jsonify({"100 latest log entries": logs[-100:]})
+        with open(log_path, "r") as log_file:
+            timestamp = log_file.readline().strip()
+            try:
+                with open(os.getenv("VOLUME_PATH", "../../ping-pong/mock") + "/counter.txt", "r") as counter_file:
+                    counter_value = counter_file.read().strip()
+            except FileNotFoundError:
+                counter_value = "Counter file not found"
+            return "<p>{}</p><p>Ping / Pongs: {}</p>".format(timestamp, counter_value)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
