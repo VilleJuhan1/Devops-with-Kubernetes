@@ -5,7 +5,6 @@ function App() {
 
   return (
     <>
-      
       <h1>The project app</h1>
       < RandomImage />
     </>

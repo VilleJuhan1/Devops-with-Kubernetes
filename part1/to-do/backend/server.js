@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 const app = express();
 dotenv.config();
 
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 3006;
 
 const ASSETS_DIR = path.resolve("./assets");
 const META_FILE = path.resolve("./imageMeta.json");
