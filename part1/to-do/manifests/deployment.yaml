@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      containers:
+        - name: todo-backend
+          image: villejuhan1/todo-backend:latest
+          env:
+            - name: PORT
+              value: "3005"
+          ports:
+            - containerPort: 3005
+        - name: todo-frontend
+          image: villejuhan1/todo-frontend:latest
+          ports:
+            - containerPort: 80
