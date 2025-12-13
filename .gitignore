@@ -5,7 +5,8 @@ part1/the-project/package-lock.json
 part1/log-output/web/venv/
 part1/log-output/script/app/
 part1/ping-pong/venv/
-part1/to-do/node_modules/
-part1/to-do/.env
-part1/to-do/package-lock.json
-part1/to-do/public/
+part1/to-do/backend/node_modules/
+part1/to-do/backend/.env
+part1/to-do/backend/package-lock.json
+part1/to-do/frontend/package-lock.json
+part1/to-do/frontend/node_modules/

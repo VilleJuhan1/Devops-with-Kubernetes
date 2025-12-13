@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Backend service for fetching and saving an image to a folder which can be mounted on a volume",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Ville-Juhani Nivasalo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "fs": "^0.0.1-security",
+    "node-fetch": "^3.3.2",
+    "path": "^0.12.7"
+  }
+}
