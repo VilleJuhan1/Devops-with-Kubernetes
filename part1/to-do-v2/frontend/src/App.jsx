@@ -1,7 +1,7 @@
 // src/App.jsx
 function App() {
 
-  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL || '/api/assets/random.jpg';
 
   return (
     <div style={{ textAlign: 'center' }}>

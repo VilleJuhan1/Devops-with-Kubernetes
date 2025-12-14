@@ -15,4 +15,4 @@ RUN npm install
 # ENV PORT=3001
 
 # Start the server when launching the container
-CMD ["node", "server.js"]
+CMD ["node", "index.js"]
