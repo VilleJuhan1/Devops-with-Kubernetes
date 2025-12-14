@@ -16,6 +16,17 @@ app.get('/api/assets/random.jpg', async (req, res) => {
   }
 });
 
+app.get("/api/assets/todos", (req, res) => {
+  console.log("Fetching todos...");
+  const todos = [
+    { id: 1, task: "Learn Kubernetes", completed: false },
+    { id: 2, task: "Build a To-Do App", completed: true },
+    { id: 3, task: "Deploy to Cloud", completed: false },
+  ];
+  res.json(todos);
+});
+
+
 
 
 export default app;

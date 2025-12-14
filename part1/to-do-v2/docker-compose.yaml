@@ -1,5 +1,5 @@
 services:
-  backend:
+  to-do-backend-svc:
     build: ./backend
     env_file:
       - ./backend/.env
@@ -11,4 +11,4 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - backend
+      - to-do-backend-svc

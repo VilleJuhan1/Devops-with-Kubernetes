@@ -12,3 +12,11 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: /tmp/kubedata/ping-pong-log-output-pv # Path on the node where data is stored
+  nodeAffinity: ## This is only required for local, it defines which nodes can access it
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3d-k3s-default-agent-0
