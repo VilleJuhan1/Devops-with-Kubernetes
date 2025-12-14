@@ -1,8 +1,21 @@
-# Devops with Kubernetes submissions
+# Devops with Kubernetes
 
-## Part 1
+This repository contains my submissions to [MOOC Devops with Kubernetes](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes).
 
-### Releases
+## k3d environment
+
+Building the local k3d environment that works with the latest release:
+
+```shell
+k3d cluster create kubehelvetti \
+  --port 8082:31111@agent:0 \
+  -p 8081:80@loadbalancer \
+  --agents 2 \
+  --volume "/tmp/kubedata/ping-pong-log-output-pv:/tmp/kubedata/ping-pong-log-output-pv@agent:*" \
+  --volume "/tmp/kubedata/to-do-assets-pv:/tmp/kubedata/to-do-assets-pv@agent:*"
+```
+
+## Submissions
 
 The link to the present release might be absent from the release itself but is present in the latest commit.
 
