@@ -18,3 +18,4 @@ The link to the present release might be absent from the release itself but is p
 - [v.0.1.10 Even more services](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.10)
 - [v.0.1.11 Persisting data](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.11)
 - [v.0.1.12 The project, step 6](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.12)
+- [v.0.1.13 The project, step 7](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.13)
