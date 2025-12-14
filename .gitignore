@@ -5,3 +5,10 @@ part1/the-project/package-lock.json
 part1/log-output/web/venv/
 part1/log-output/script/app/
 part1/ping-pong/venv/
+part1/to-do-v2/backend/node_modules/
+part1/to-do-v2/backend/.env
+part1/to-do-v2/backend/package-lock.json
+part1/to-do-v2/frontend/node_modules/
+part1/to-do-v2/frontend/.env
+part1/to-do-v2/frontend/package-lock.json
+part1/graveyard/

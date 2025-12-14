@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: to-do-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: to-do-frontend
+  template:
+    metadata:
+      labels:
+        app: to-do-frontend
+    spec:
+      containers:
+        - name: to-do-frontend
+          image: villejuhan1/todo-frontend:latest
+          ports:
+            - containerPort: 80
