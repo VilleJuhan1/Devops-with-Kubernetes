@@ -595,3 +595,90 @@ Also the pod deployment must be configured to use the PVC
           - name: shared-image # PVC name
             mountPath: /usr/src/app/files
 ```
+
+## [Chapter 3 - More building blocks](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3)
+
+### [Part 1: Networking between pods](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/networking-between-pods)
+
+Sometimes, the best way to debug is to manually test what is going on. You can just go inside a pod or send a request manually from another pod. You can use eg. busybox (opens in a new tab) (opens in a new tab), that is a light weight Linux distro for debugging.
+
+Let us start a busybox pod by applying the following yaml:
+
+```shell
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-busybox
+  labels:
+    app: my-busybox
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  restartPolicy: Always
+```
+
+```shell
+$ kubectl exec -it my-busybox -- wget -qO - http://todo-backend-svc:2345
+```
+
+```shell
+$ kubectl exec -it my-busybox -- sh
+/ # wget -qO - http://todo-backend-svc:2345
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <main>
+    <div>
+      <h1>The project App</h1>
+      <img src="image" alt="Kubeapp" width="300" />
+      <form action="/todos" method="post">
+        <input type="text" id="content" name="content" maxlength="140" required>
+        <button type="submit">Create todo</button>
+      </form>
+      <ul>
+          <li>Learn JavaScript</li>
+          <li>Learn React</li>
+          <li>Build a project</li>
+      </ul>
+      <p>DevOps with Kubernetes 2025</p>
+    </div>
+  </main>
+  </body>
+$ exit
+```
+
+```shell
+$ kubectl get svc
+NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+todo-backend-svc   ClusterIP   10.43.89.182   <none>        2345/TCP   2d1h
+
+$ kubectl exec -it my-busybox -- wget -qO - http://10.43.89.182:2345
+
+$ kubectl describe pod todo-backend-dep-84fcdff4cc-2x9wl
+Name:             todo-backend-dep-84fcdff4cc-2x9wl
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             k3d-k3s-default-agent-0/192.168.176.5
+Start Time:       Mon, 08 Apr 2024 23:27:00 +0300
+Labels:           app=todo-backend
+                  pod-template-hash=84fcdff4cc
+Annotations:      <none>
+Status:           Running
+IP:               10.42.0.63
+
+$ kubectl exec -it my-busybox wget -qO - http://10.42.0.63:3000
+```
+
+Remember to delete the pod in the end as it's not a deployment and should not be running forever:
+
+```shell
+$ kubectl delete pod/my-busybox
+```

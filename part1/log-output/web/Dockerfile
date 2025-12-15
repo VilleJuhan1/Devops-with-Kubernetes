@@ -3,11 +3,8 @@ WORKDIR /app
 COPY app.py .
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-# Log file needs to exist or otherwise it defaults to development path "../script/log/app.log".
-# If neither exist, the web app fails to start.
-RUN mkdir /log \
-  && mkdir /shared
+RUN mkdir /log && touch /log/app.log && echo "Mock timestamp 2025-12-11T18:38:43: FmB7um8YqB4NqlXMX5UBBoBVj4XVDJ" > /log/app.log
 ENV LOG_PATH=/log
-ENV VOLUME_PATH=/shared
+#ENV VOLUME_PATH=/shared
 EXPOSE 8081
 CMD ["python", "app.py"]

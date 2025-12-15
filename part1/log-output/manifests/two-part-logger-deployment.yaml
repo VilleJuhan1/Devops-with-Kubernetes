@@ -15,9 +15,9 @@ spec:
       volumes: # Define volume
         - name: log-data
           emptyDir: {}
-        - name: ping-pong-log-output-pv
-          persistentVolumeClaim:
-            claimName: ping-pong-log-output-volume
+        #- name: ping-pong-log-output-pv
+        #  persistentVolumeClaim:
+        #    claimName: ping-pong-log-output-volume
       containers:
         - name: logger
           image: villejuhan1/log-output:logger
@@ -28,8 +28,13 @@ spec:
         - name: log-response
           image: villejuhan1/log-output:reader
           imagePullPolicy: Always
+          env:
+            - name: PINGS_API
+              value: "http://ping-pong-svc:2347"
+            - name: LOG_PATH
+              value: "/log"
           volumeMounts: # Mount volume
             - name: log-data
               mountPath: /log
-            - name: ping-pong-log-output-pv
-              mountPath: /shared
+            #- name: ping-pong-log-output-pv
+            #  mountPath: /shared
