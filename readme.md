@@ -19,6 +19,8 @@ k3d cluster create kubehelvetti \
 
 The link to the present release might be absent from the release itself but is present in the latest commit.
 
+### Part 1
+
 - [v0.1.1 Log output](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.1)
 - [v0.1.2 The project, step 1](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.2)
 - [v0.1.3 Declarative approach](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.3)
@@ -32,3 +34,7 @@ The link to the present release might be absent from the release itself but is p
 - [v.0.1.11 Persisting data](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.11)
 - [v.0.1.12 The project, step 6](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.12)
 - [v.0.1.13 The project, step 7](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.13)
+
+### Part 2
+
+- [v.0.2.1 Connecting pods](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.1)
