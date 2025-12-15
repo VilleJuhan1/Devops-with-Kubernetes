@@ -24,6 +24,9 @@ class Counter:
         with open(os.getenv("VOLUME_PATH", "./mock") + "/counter.txt", "w") as f:
             f.write(str(self.value))
         return self.value
+    
+    def get(self):
+        return self.value
 
 # Define the counter and the Flask app
 counter = Counter()
@@ -35,6 +38,10 @@ def pingpong():
     newCount = counter.inc()
     #print(f"GET requests: {newCount}")
     return {"pong": newCount}
+
+@app.route("/pings")
+def pings():
+    return {"pings": counter.get()}
 
 # Run the Flask app if this script is executed directly
 if __name__ == "__main__":
