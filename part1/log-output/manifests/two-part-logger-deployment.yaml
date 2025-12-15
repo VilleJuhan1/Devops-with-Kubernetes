@@ -28,6 +28,11 @@ spec:
         - name: log-response
           image: villejuhan1/log-output:reader
           imagePullPolicy: Always
+          env:
+            - name: PINGS_API
+              value: "http://ping-pong-svc:2347"
+            - name: LOG_PATH
+              value: "/log"
           volumeMounts: # Mount volume
             - name: log-data
               mountPath: /log
