@@ -1,4 +1,5 @@
 function TodoList({ todos = [] }) {
+  console.log('Rendering TodoList with todos:', todos);
   if (!Array.isArray(todos)) {
     console.error('todos is not an array:', todos);
     return null;
@@ -6,10 +7,10 @@ function TodoList({ todos = [] }) {
 
   return (
     <ul>
-      {todos.map(({ id, task, completed }) => (
-        <li key={id}>
-          {task}
-          {completed && ' ✅'}
+      {todos.map((t) => (
+        <li key={t.id}>
+          {t.todo}
+          {t.completed && ' ✅'}
         </li>
       ))}
     </ul>
