@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { addTodo } from "../api";
 
-function TodoForm() {
+function TodoForm({ onAdd }) {
   const [todo, setTodo] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async  (e) => {
     e.preventDefault();
     console.log("Boop!");
+    const newTodo = await addTodo({ todo });
+    console.log("New todo added:", newTodo);
+    onAdd(newTodo);
     setTodo("");
 
   };
