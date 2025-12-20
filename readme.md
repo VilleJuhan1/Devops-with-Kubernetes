@@ -38,3 +38,4 @@ The link to the present release might be absent from the release itself but is p
 ### Part 2
 
 - [v.0.2.1 Connecting pods](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.1)
+- [v.0.2.2 The project, step 8](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.2)
