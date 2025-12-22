@@ -682,3 +682,117 @@ Remember to delete the pod in the end as it's not a deployment and should not be
 ```shell
 $ kubectl delete pod/my-busybox
 ```
+
+### [Part 2: Organizing a Cluster](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/organizing-a-cluster)
+
+Namespaces are used to keep resources separated. A company that uses one cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g. if a service called cat-pictures is in a namespace ns-test, it could be found from other namespaces via http://cat-pictures.ns-test.
+
+Accessing namespaces with kubectl is achieved by using the -n flag. For example, you can see what the namespace kube-system has with
+
+```shell
+kubectl get pods -n kube-system
+```
+
+All namespaces:
+
+```shell
+kubectl get pods --all-namespaces
+NAMESPACE     NAME                                      READY   STATUS      RESTARTS   AGE
+default       log-output-deployment-6d698d8755-qppqf    2/2     Running     0          6d20h
+default       ping-pong-deployment-75cfc5994-jcqth      1/1     Running     0          6d20h
+default       to-do-backend-69d4fc8687-g6lvh            1/1     Running     0          2d5h
+default       to-do-frontend-65fb4b7c4b-nkqr6           1/1     Running     0          2d5h
+kube-system   coredns-64fd4b4794-przj4                  1/1     Running     0          6d20h
+kube-system   helm-install-traefik-crd-d4qcv            0/1     Completed   0          6d20h
+kube-system   helm-install-traefik-m9k75                0/1     Completed   2          6d20h
+kube-system   local-path-provisioner-774c6665dc-j8545   1/1     Running     0          6d20h
+kube-system   metrics-server-7bfffcd44-r7s7m            1/1     Running     0          6d20h
+kube-system   svclb-traefik-4b650fcb-b2xj9              2/2     Running     0          6d20h
+kube-system   svclb-traefik-4b650fcb-qbtw7              2/2     Running     0          6d20h
+kube-system   svclb-traefik-4b650fcb-zh5sn              2/2     Running     0          6d20h
+kube-system   traefik-c98fdf6fb-xg2hq                   1/1     Running     0          6d20h
+```
+
+Creating a namespace
+
+```shell
+kubectl create namespace example-namespace
+```
+
+Defining the namespace on a deployment
+
+```shell
+# ...
+metadata:
+  namespace: example-namespace
+  name: example
+# ...
+```
+
+Changing the current default context
+
+```shell
+kubectl config set-context --current --namespace=<name>
+```
+
+#### Kubectx and kubens tools
+
+```shell
+# switch to another cluster that's in kubeconfig
+$ kubectx minikube
+Switched to context "minikube".
+
+# switch back to previous cluster
+$ kubectx -
+Switched to context "oregon".
+
+# rename context
+$ kubectx dublin=gke_ahmetb_europe-west1-b_dublin
+Context "gke_ahmetb_europe-west1-b_dublin" renamed to "dublin".
+
+# change the active namespace on kubectl
+$ kubens kube-system
+Context "test" set.
+Active namespace is "kube-system".
+
+# go back to the previous namespace
+$ kubens -
+Context "test" set.
+Active namespace is "default".
+
+# change the active namespace even if it doesn't exist
+$ kubens not-found-namespace --force
+Context "test" set.
+Active namespace is "not-found-namespace".
+---
+$ kubens not-found-namespace -f
+Context "test" set.
+Active namespace is "not-found-namespace".
+```
+
+Creating a namespace via a deployment
+
+```shell
+> test.yaml
+
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: test
+  labels:
+    name: test
+
+> kubectl apply -f test.yaml
+```
+
+Getting all namespaces
+
+```shell
+kubectl get namespaces
+```
+
+Add to the deployment file:
+
+```shell
+namespace: test
+```
