@@ -41,3 +41,4 @@ The link to the present release might be absent from the release itself but is p
 - [v0.2.2 The project, step 8](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.2)
 - [v0.2.3 Keep them separated](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.3)
 - [v0.2.4 The project, step 9](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.4)
+- [v0.2.5. Documentation and ConfigMaps](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.5)
