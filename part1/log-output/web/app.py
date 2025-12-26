@@ -20,6 +20,18 @@ def get_pingpong_count():
     except requests.RequestException:
         return f"Error: Unable to connect"
     
+def read_config_message():
+    config_message = os.getenv("CONFIG_MESSAGE", "No config message found or development mode")
+    return config_message
+
+def read_config_file():
+    config_path = "/tmp/information.txt"
+    try:
+        with open(config_path, "r") as config_file:
+            return config_file.read().strip()
+    except Exception as e:
+        return f"Error reading config file: {str(e)}"
+
 # Create a web endpoint for the log output
 @app.route("/logs")
 def logs():
@@ -31,7 +43,11 @@ def logs():
             except Exception as e:
                 timestamp = f"Error reading log file: {str(e)}"
             counter_value = get_pingpong_count() # Retrieve pingpong count
+            config_message = read_config_message()
+            config_file_content = read_config_file()
             return (
+                f"<p>file content: {config_file_content}</p>"
+                f"<p>env variable: {config_message}</p>"
                 f"<p>{timestamp}</p>"
                 f"<p>Ping / Pongs: {counter_value}</p>"
             )

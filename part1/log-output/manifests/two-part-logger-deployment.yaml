@@ -16,6 +16,9 @@ spec:
       volumes: # Define volume
         - name: log-data
           emptyDir: {}
+        - name: log-output-configmap
+          configMap:
+            name: log-output-configmap
         #- name: ping-pong-log-output-pv
         #  persistentVolumeClaim:
         #    claimName: ping-pong-log-output-volume
@@ -34,8 +37,15 @@ spec:
               value: "http://ping-pong-svc:2347"
             - name: LOG_PATH
               value: "/log"
+            - name: CONFIG_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: log-output-configmap
+                  key: MESSAGE
           volumeMounts: # Mount volume
             - name: log-data
               mountPath: /log
+            - name: log-output-configmap
+              mountPath: /tmp
             #- name: ping-pong-log-output-pv
             #  mountPath: /shared

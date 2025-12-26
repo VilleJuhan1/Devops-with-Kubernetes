@@ -796,3 +796,271 @@ Add to the deployment file:
 ```shell
 namespace: test
 ```
+
+#### Labels
+
+Labels can help us humans identify resources and Kubernetes can use them to act upon a group of resources. You can query resources that have a certain label.
+
+```shell
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hashgenerator-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hashgenerator
+  template:
+    metadata:
+      labels:
+        app: hashgenerator
+    spec:
+      containers:
+        - name: hashgenerator
+          image: jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
+```
+
+Adding a label manually
+
+```shell
+$ kubectl label po hashgenerator-dep-7b9b88f8bf-lvcv4 importance=great
+  pod/hashgenerator-dep-7b9b88f8bf-lvcv4 labeled
+```
+
+Query with a label
+
+```shell
+$ kubectl get pod -l importance=great
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-7b9b88f8bf-lvcv4   1/1     Running   0          17m
+```
+
+Deciding on which node to run using label networkquality: excellent
+
+```shell
+    ...
+    spec:
+      containers:
+        - name: hashgenerator
+          image: jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
+      nodeSelector:
+        networkquality: excellent
+```
+
+Labelling a node manually
+
+```shell
+$ kubectl label nodes k3d-k3s-default-agent-1 networkquality=excellent
+  node/k3d-k3s-default-agent-1 labeled
+
+$ kubectl get po
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-7b9b88f8bf-mktcl   1/1     Running   0          5m30s
+```
+
+### [Part 3: Configuring applications](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/configuring-applications)
+
+Kubernetes has two resources for configuration management. [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) are for sensitive information that are given to containers on runtime. [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are quite much like secrets but they may contain any kind of configurations. Use cases for ConfigMaps vary: you may have a ConfigMap mapped to a file with some values that the server reads during runtime. Changing the ConfigMap will instantly change the behavior of the application. Both can also be used to introduce environment variables.
+
+#### Secrets
+
+Example app deployment
+
+```shell
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/deployment.yaml \
+                -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/ingress.yaml \
+                -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/service.yaml
+```
+
+deployment.yaml
+
+```shell
+# ...
+containers:
+  - name: imageagain
+    envFrom:
+      - secretRef:
+          name: pixabay-apikey
+```
+
+longer version with a dedicated ENV name
+
+```shell
+# ...
+containers:
+  - name: imageagain
+    env:
+      - name: API_KEY # ENV name passed to container
+        valueFrom:
+          secretKeyRef:
+            name: pixabay-apikey
+            key: API_KEY # ENV name in the secret
+```
+
+Application won't run before we assign a value for the secret
+
+```shell
+$ kubectl describe pod imageapi-dep-6cdd4879f7-zwlbr
+Name:             imageapi-dep-6cdd4879f7-zwlbr
+Status:           Pending
+IP:               10.42.0.89
+
+...
+
+Events:
+  Type     Reason     Age     From       Message
+  ----     ------     ----    ----       -------
+  Warning  Failed     21m     kubelet    Error: secret "pixabay-apikey" not found
+  Normal   Pulled     3m15s   kubelet    Container image "jakousa/dwk-app4:b7fc18de2376da80ff0cfc72cf581a9f94d10e64" already present on machine
+```
+
+Let's create secret.yaml
+
+```shell
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pixabay-apikey
+data:
+  API_KEY: aHR0cDovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PWRRdzR3OVdnWGNR
+  # base64 encoded value should look something like this, note that this won't work
+  # create your own apikey if you would like to test the app
+```
+
+Create the key
+
+```shell
+$ echo -n 'my-string' | base64
+bXktc3RyaW5n
+```
+
+We will now use [SOPS](https://github.com/mozilla/sops) to encrypt the secret.yaml file. The tool has some additional flexibility, so I hope you get some use out of it, regardless of the environment you will be working in the future. For example, you could use it with Docker Compose files. We will use [age](https://github.com/FiloSottile/age) for encryption because it's recommended over PGP in the Readme. So install both of the tools, SOPS and age.
+
+Then create a key-pair
+
+```shell
+$ age-keygen -o key.txt
+  Public key: age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4
+
+$ sops --encrypt \
+       --age age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4 \
+       --encrypted-regex '^(data)$' \
+       secret.yaml > secret.enc.yaml
+
+$ cat secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pixabay-apikey
+data:
+  API_KEY: ENC[AES256_GCM,data:geKXBLn4kZ9A2KHnFk4RCeRRnUZn0DjtyxPSAVCtHzoh8r6YsCUX3KiYmeuaYixHv3DRKHXTyjg=,iv:Lk290gWZnUGr8ygLGoKLaEJ3pzGBySyFJFG/AjwfkJI=,tag:BOSX7xJ/E07mXz9ZFLCT2Q==,type:str]
+sops:
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDczBhbGNxUkc4R0U0SWZI
+        OEVYTEdzNUlVMEY3WnR6aVJ6OEpGeCtJQ1hVCjVSbDBRUnhLQjZYblQ0UHlneDIv
+        UmswM2xKUWxRMHZZQjVJU21UbDNEb3MKLS0tIGhOMy9lQWx4Q0FUdVhoVlZQMjZz
+        dDEreFAvV3Nqc3lIRWh3RGRUczBzdXcKh7S4q8qp5SrDXLQHZTpYlG43vLfBlqcZ
+        BypI8yEuu18rCjl3HJ+9jbB0mrzp60ld6yojUnaggzEaVaCPSH/BMA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2021-10-29T12:20:40Z"
+  mac: ENC[AES256_GCM,data:qhOMGFCDBXWhuildW81qTni1bnaBBsYo7UHlv2PfQf8yVrdXDtg7GylX9KslGvK22/9xxa2dtlDG7cIrYFpYQPAh/WpOzzn9R26nuTwvZ6RscgFzHCR7yIqJexZJJszC5yd3w5RArKR4XpciTeG53ygb+ng6qKdsQsvb9nQeBxk=,iv:PZLF3Y+OhtLo+/M0C0hqINM/p5K94tb5ZGc/OG8loJI=,tag:ziFOjWuAW/7kSA5tyAbgNg==,type:str]
+  pgp: []
+  encrypted_regex: ^(data)$
+  version: 3.7.1
+```
+
+Decrypting
+
+```shell
+$ export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
+
+$ sops --decrypt secret.enc.yaml > secret.yaml
+```
+
+You can also apply a secret yaml via piping directly, this helps avoid creating a plain secret.yaml file.
+
+```shell
+$ sops --decrypt secret.enc.yaml | kubectl apply -f -
+```
+
+#### ConfigMaps
+
+[ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are similar but the data doesn't have to be encoded and is not encrypted. Let's say you have a videogame server that takes a configuration file serverconfig.txt which looks like this:
+
+```shell
+maxplayers=12
+difficulty=2
+```
+
+As a ConfigMap
+
+```shell
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+data:
+  serverconfig.txt: |
+    maxplayers=12
+    difficulty=2
+```
+
+Now the ConfigMap can be added to the container as a _volume_. By changing a value, like "maxplayers" in this case, and applying the ConfigMap the changes would be reflected in that volume.
+
+From the official [documentation](https://kubernetes.io/docs/concepts/configuration/configmap/)
+
+```shell
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  player_initial_lives: "3"
+  ui_properties_file_name: "user-interface.properties"
+
+  # file-like keys
+  game.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5
+  user-interface.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true
+```
+
+There are four different ways that you can use a ConfigMap to configure a container inside a Pod:
+
+- Inside a container command and args
+- Environment variables for a container
+- Add a file in read-only volume, for the application to read
+- Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap
+
+Using a ConfigMap as a volume
+
+```shell
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: redis
+    volumeMounts:
+    - name: foo
+      mountPath: "/etc/foo"
+      readOnly: true
+  volumes:
+  - name: foo
+    configMap:
+      name: myconfigmap
+```
