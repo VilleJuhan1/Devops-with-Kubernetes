@@ -1,17 +1,18 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { IMAGE_PATH } from '../utils/config.js';
 
-const IMAGE_PATH = path.resolve('assets/random.jpg');
-const ONE_HOUR = 60 * 60 * 1000;
+const image = path.resolve(IMAGE_PATH);
+const one_hour = 60 * 60 * 1000;
 
 async function needsRefresh() {
-  console.log(`Checking if image at ${IMAGE_PATH} needs refresh`);
+  console.log(`Checking if image at ${image} needs refresh`);
   try {
-    const stats = await fs.stat(IMAGE_PATH);
+    const stats = await fs.stat(image);
     const age = Date.now() - stats.mtime.getTime();
     const ageHumanReadable = (age / 1000 / 60).toFixed(2);
     console.log(`Image age: ${ageHumanReadable} minutes`);
-    return age > ONE_HOUR;
+    return age > one_hour;
   } catch (err) {
     console.log('Image file does not exist, needs refresh');
     return true;
@@ -27,7 +28,7 @@ async function downloadNewImage() {
 
   console.log(`The image load response status was: ${res.status}`);
   const buffer = Buffer.from(await res.arrayBuffer());
-  await fs.writeFile(IMAGE_PATH, buffer);
+  await fs.writeFile(image, buffer);
 }
 
 export async function getImagePath() {
@@ -35,6 +36,6 @@ export async function getImagePath() {
     console.log('Downloading new image...');
     await downloadNewImage();
   }
-  console.log(`Serving image from path: ${IMAGE_PATH}`);
-  return IMAGE_PATH;
+  console.log(`Serving image from path: ${image}`);
+  return image;
 }

@@ -854,7 +854,7 @@ Labelling a node manually
 $ kubectl label nodes k3d-k3s-default-agent-1 networkquality=excellent
   node/k3d-k3s-default-agent-1 labeled
 
-$ kubectl get po
+$ kubectl get pods
   NAME                                 READY   STATUS    RESTARTS   AGE
   hashgenerator-dep-7b9b88f8bf-mktcl   1/1     Running   0          5m30s
 ```

@@ -5,6 +5,7 @@ metadata:
   namespace: project
 data:
   PORT: "3005"
+  IMAGE_PATH: "assets/random.jpg"
 ---
 apiVersion: apps/v1
 kind: Deployment
