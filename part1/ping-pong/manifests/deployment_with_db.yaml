@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ping-pong
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ping-pong
+  template:
+    metadata:
+      labels:
+        app: ping-pong
+    spec:
+      containers:
+        - name: ping-pong
+          image: villejuhan1/ping-pong:postgres
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085
+          env:
+            - name: DEV_MODE
+              value: "true"
+            - name: DATABASE_HOST
+              value: ping-pong-postgres-svc
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: ping-pong-appdb
+            - name: DATABASE_USER
+              value: appuser
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ping-pong-postgres-secret
+                  key: POSTGRES_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            initialDelaySeconds: 5
+            periodSeconds: 5

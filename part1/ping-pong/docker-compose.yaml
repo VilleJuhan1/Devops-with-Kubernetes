@@ -1,0 +1,41 @@
+# This docker-compose file is used for testing the ping-pong application with a Postgres database.
+# It sets up a Postgres service and the ping-pong application service that connects to the database.
+# To build and run the services, use the following commands:
+# docker compose build --no-cache
+# docker compose up -d
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ping-pong-appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ping-pong:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      DEV_MODE: "true"
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ping-pong-appdb
+      DATABASE_USER: appuser
+      DATABASE_PASSWORD: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

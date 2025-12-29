@@ -1064,3 +1064,132 @@ spec:
     configMap:
       name: myconfigmap
 ```
+
+### [Part 4: StatefulSets and Jobs](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/statefulsets-and-jobs)
+
+What you'll learn in this page
+
+- Deploy a stateful application, such as a database, to Kubernetes
+- Use jobs and cronjobs to execute periodic or single-time tasks
+
+#### StatefulSets
+
+Deployment creates and scales pods that are replicas - they are new copies of the same container that are running in parallel. So the volume is shared by all pods in that deployment. For read-only volumes, this is ok, but for volumes that have read-write access, this might cause problems and can in the worst case, cause even data corruption.
+
+[StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) are similar to Deployments except they make sure that if a pod dies, the replacement is identical, with the same network identity and name. In addition, if the pod is scaled, each copy will have its own storage. So, StatefulSets are for stateful applications, where the state is stored inside the app, not outside, such as in a database. StatefulSets are ideal for scaling applications that require persistent state, such as video game servers (e.g., Minecraft servers) or databases. One key advantage of using StatefulSets is that they ensure data safety by not deleting the associated volumes when the StatefulSet is deleted.
+
+Example with Redis
+
+```shell
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    name: web
+  clusterIP: None
+  selector:
+    app: redisapp
+```
+
+```shell
+# statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-stset
+spec:
+  serviceName: redis-svc
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redisapp
+  template:
+    metadata:
+      labels:
+        app: redisapp
+    spec:
+      containers:
+        - name: redisfiller
+          image: jakousa/dwk-app5:54203329200143875187753026f4e93a1305ae26
+        - name: redis
+          image: redis:5.0
+          ports:
+            - name: web
+              containerPort: 6379
+          volumeMounts:
+            - name: redis-data-storage
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 100Mi
+```
+
+The stateful set looks a lot like a Deployment but uses a volumeClaimTemplate to claim its own volume for each pod. In Chapter 2 we jumped through a few hurdles to get ourselves storage, but now we use a K3s-provided dynamically provisioned storage by specifying storageClassName: local-path. Since the local-path storage is dynamically provisioned, we don't need to create PersistentVolume for the volume, K3s takes care of that for us.
+
+```shell
+# two PersistentVolumeClaims are created
+$ kubectl get pvc
+NAME              STATUS   VOLUME                   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+data-redis-ss-0   Bound    pvc-f318ca82-d584-4e10   100Mi      RWO            local-path     53m
+data-redis-ss-1   Bound    pvc-d8e5b81a-05ec-420b   100Mi      RWO            local-path     53m
+```
+
+As there is no clusterIP, the service is only accessible from within the cluster
+
+```shell
+$ ping redis-svc
+PING redis-svc (10.42.2.25): 56 data bytes
+64 bytes from 10.42.2.25: seq=0 ttl=64 time=0.165 ms
+
+$ nslookup redis-svc
+Name:	redis-svc.default.svc.cluster.local
+Address: 10.42.2.25
+Name:	redis-svc.default.svc.cluster.local
+Address: 10.42.1.32
+```
+
+The identities of the pods are permanent, so if e.g. the pod redis-stset-0 dies, it is guaranteed to have the same name when it is scheduled again, and it is still attached to the same volume.
+
+It is possible to combine different resource definitions in a single file by separating them with three - characters, ie.
+
+```shell
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-stset
+spec:
+  serviceName: redis-svc
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redisapp
+  # more rows
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    name: web
+  clusterIP: None
+  selector:
+    app: redisapp
+```
+
+[Running Postgres DB on a container](https://hub.docker.com/_/postgres)

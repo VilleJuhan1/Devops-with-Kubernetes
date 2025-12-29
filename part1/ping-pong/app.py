@@ -1,48 +1,129 @@
-from flask import Flask
 import os
+from flask import Flask, request, jsonify
+import psycopg2
 
-# A tracker to keep the count of requests to /pingpong
-class Counter:
-    # Initialize the counter by reading the existing value from a file, or starting at 0
-    def __init__(self):
-        try:
-            with open(os.getenv("VOLUME_PATH", "./mock") + "/counter.txt", "r") as f:
-                content = f.read()
-                if content.isdigit():
-                    self.value = int(content)
-                    print(f"Existing counter value: {self.value}")
-                else:
-                    print("Initializing counter to 0")
-                    self.value = 0
-        except FileNotFoundError:
-            print("Counter file not found, initializing to 0") # PV mount might overwrite the file so this is a failsafe
-            self.value = 0
-
-    # Increment the counter and return the new value
-    def inc(self):
-        self.value += 1
-        with open(os.getenv("VOLUME_PATH", "./mock") + "/counter.txt", "w") as f:
-            f.write(str(self.value))
-        return self.value
-    
-    def get(self):
-        return self.value
-
-# Define the counter and the Flask app
-counter = Counter()
 app = Flask(__name__)
 
+# Connect to the PostgreSQL database
+def get_conn():
+    return psycopg2.connect(
+        host=os.environ["DATABASE_HOST"],
+        port=os.environ.get("DATABASE_PORT", 5432),
+        dbname=os.environ["DATABASE_NAME"],
+        user=os.environ["DATABASE_USER"],
+        password=os.environ["DATABASE_PASSWORD"],
+    )
+
+# Define the /reset endpoint
+# POST-method clears all records from the api_calls table (only allowed in dev mode)
+@app.route("/reset", methods=["POST"])
+def reset():
+    if os.environ.get("DEV_MODE") != "true":
+        return "not allowed", 403
+
+    conn = get_conn()
+
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("TRUNCATE TABLE api_calls")
+
+        return "", 204
+
+    finally:
+        conn.close()
+
+# Define the /entries endpoint
+# GET-method returns all recorded API call entries (only allowed in dev mode)
+@app.route("/entries", methods=["GET"])
+def list_entries():
+    if os.environ.get("DEV_MODE") != "true":
+        return "not allowed", 403
+
+    conn = get_conn()
+
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT id, endpoint, method, timestamp, user_agent, remote_addr
+                    FROM api_calls
+                    ORDER BY timestamp DESC
+                """)
+                rows = cur.fetchall()
+
+        entries = [
+            {
+                "id": row[0],
+                "endpoint": row[1],
+                "method": row[2],
+                "timestamp": row[3].isoformat(),
+                "user_agent": row[4],
+                "remote_addr": row[5],
+            }
+            for row in rows
+        ]
+
+        return jsonify(entries)
+
+    finally:
+        conn.close()
+
 # Define the /pingpong endpoint
-@app.route("/pingpong")
+# GET-method saves a new entry with some metadata from the request and returns "pong!"
+@app.route("/pingpong", methods=["GET"])
 def pingpong():
-    newCount = counter.inc()
-    #print(f"GET requests: {newCount}")
-    return {"pong": newCount}
+    conn = get_conn()
 
-@app.route("/pings")
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO api_calls (endpoint, method, user_agent, remote_addr)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (
+                        request.path,
+                        request.method,
+                        request.headers.get("User-Agent"),
+                        request.remote_addr,
+                    ),
+                )
+
+        # Upon successful insertion, return "pong!"
+        return "pong!", 201
+
+    finally:
+        conn.close()
+
+# Define the /pings endpoint
+# GET-method returns the count of all /pingpong calls recorded in the database
+@app.route("/pings", methods=["GET"])
 def pings():
-    return {"pings": counter.get()}
+    conn = get_conn()
 
-# Run the Flask app if this script is executed directly
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM api_calls")
+                count = cur.fetchone()[0]
+
+        return jsonify({"count": count}), 200
+
+    finally:
+        conn.close()
+
+# Health check endpoint to verify database connectivity
+@app.route("/health", methods=["GET"])
+def health():
+    try:
+        conn = get_conn()
+        conn.close()
+        return "ok", 200
+    except Exception:
+        return "db not ready", 503
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8085)
