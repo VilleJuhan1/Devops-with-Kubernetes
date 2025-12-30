@@ -991,6 +991,34 @@ You can also apply a secret yaml via piping directly, this helps avoid creating 
 $ sops --decrypt secret.enc.yaml | kubectl apply -f -
 ```
 
+More commands
+
+```shell
+# Create the keypair using age and save it to user folder
+age-keygen -o ~/.config/sops/age/keys.txt
+
+# Create the .sops.yaml used for ENCRYPTING using the created Public key
+creation_rules:
+  - encrypted_regex: "^(data|stringData)$"
+    age: age12hlqsxnr76q884zjhzh3up3x9jpf939k29fu3vdmy5fxyhklcfmqs00g4x
+
+# Encrypt the secret-file
+sops -e -i manifests/postgres-secret.yaml
+
+# Decrypt the secret-file only for deployment via pipe
+sops -d manifests/postgres-secret.yaml | kubectl apply -f -
+
+# Export the master key file for editing
+export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt
+
+# Edit the file (ie. update password)
+sops ./manifests/postgres-secret.yaml
+
+# Optional: You can also use a one-liner
+SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops ./manifests/postgres-secret.yaml
+
+```
+
 #### ConfigMaps
 
 [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are similar but the data doesn't have to be encoded and is not encrypted. Let's say you have a videogame server that takes a configuration file serverconfig.txt which looks like this:

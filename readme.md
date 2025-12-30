@@ -4,7 +4,7 @@ This repository contains my submissions to [MOOC Devops with Kubernetes](https:/
 
 ## k3d environment
 
-Building the local k3d environment that works with the latest release:
+Building the local k3d environment that works with the latest release (ping-pong-pv is no longer necessary):
 
 ```shell
 k3d cluster create kubehelvetti \

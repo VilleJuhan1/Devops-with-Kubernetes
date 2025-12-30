@@ -109,7 +109,7 @@ def pings():
                 cur.execute("SELECT COUNT(*) FROM api_calls")
                 count = cur.fetchone()[0]
 
-        return jsonify({"count": count}), 200
+        return jsonify({"pings": count}), 200
 
     finally:
         conn.close()

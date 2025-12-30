@@ -16,7 +16,7 @@ spec:
       containers:
         - name: ping-pong
           image: villejuhan1/ping-pong:postgres
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8085
           env:
