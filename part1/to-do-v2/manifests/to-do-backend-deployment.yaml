@@ -6,6 +6,11 @@ metadata:
 data:
   PORT: "3005"
   IMAGE_PATH: "assets/random.jpg"
+  DATABASE_HOST: to-do-postgres-svc
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: tododb
+  DATABASE_USER: appuser
+  DEV_MODE: "true" # Used for development-specific configurations
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -23,12 +28,18 @@ spec:
     spec:
       containers:
         - name: to-do-backend
-          image: villejuhan1/todo-backend:latest
+          image: villejuhan1/todo-backend:postgres
           ports:
             - containerPort: 3005
           envFrom:
             - configMapRef:
                 name: backend-config
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: to-do-postgres-secret
+                  key: POSTGRES_PASSWORD
           volumeMounts:
             - name: assets-storage
               mountPath: /app/assets
