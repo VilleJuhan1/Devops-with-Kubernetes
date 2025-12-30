@@ -25,4 +25,19 @@ todosRouter.post("/", async (req, res) => {
   }
 });
 
+// DELETE /api/todos - Delete all todos (development/testing only)
+todosRouter.delete("/", async (req, res) => {
+  if (process.env.DEV_MODE !== "true") {
+    return res.status(403).json({ error: "Not allowed" });
+  }
+
+  try {
+    await todoService.deleteAllTodos();
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete todos" });
+  }
+});
+
 export default todosRouter;

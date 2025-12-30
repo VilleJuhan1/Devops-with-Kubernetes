@@ -20,7 +20,13 @@ async function addTodo({ userId = 1, todo }) {
   return result.rows[0];
 }
 
+// Delete all todos (for development/testing purposes)
+async function deleteAllTodos() {
+  await pool.query("TRUNCATE TABLE todos RESTART IDENTITY");
+}
+
 export default {
   getAllTodos,
   addTodo,
+  deleteAllTodos,
 };

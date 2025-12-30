@@ -15,3 +15,13 @@ export async function addTodo(todo) {
   });
   return res.json();
 }
+
+export async function deleteAllTodos() {
+  const res = await fetch(API_URL, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to delete todos");
+  }
+}

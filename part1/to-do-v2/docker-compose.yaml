@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   to-do-backend-svc:
     build: ./backend
@@ -10,7 +9,8 @@ services:
       - to-do-postgres-svc
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
     ports:
       - "3000:80"
     depends_on:
