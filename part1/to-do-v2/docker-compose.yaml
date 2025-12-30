@@ -6,6 +6,8 @@ services:
       - ./backend/.env
     expose:
       - "3005"
+    depends_on:
+      - to-do-postgres-svc
 
   frontend:
     build: ./frontend
@@ -13,7 +15,7 @@ services:
       - "3000:80"
     depends_on:
       - to-do-backend-svc
-      - to-do-postgres-svc
+
   to-do-postgres-svc:
     image: postgres:16
     container_name: to-do-postgres-svc

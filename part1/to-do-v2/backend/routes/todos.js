@@ -1,22 +1,28 @@
 import express from "express";
-const todosRouter = express.Router();
 import todoService from "../services/todoService.js";
 
-// GET /api/todos
-todosRouter.get("/", (req, res) => {
-  res.json(todoService.getAllTodos());
+const todosRouter = express.Router();
+
+// GET /api/todos - Fetch all todos
+todosRouter.get("/", async (req, res) => {
+  try {
+    const todos = await todoService.getAllTodos();
+    res.json(todos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch todos" });
+  }
 });
 
-// POST /api/todos
-todosRouter.post("/", (req, res) => {
-  const { todo } = req.body;
-
-  if (!todo) {
-    return res.status(400).json({ error: "Todo required" });
+// POST /api/todos - Create a new todo
+todosRouter.post("/", async (req, res) => {
+  try {
+    const todo = await todoService.addTodo(req.body);
+    res.status(201).json(todo);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to create todo" });
   }
-
-  const newTodo = todoService.addTodo({ todo });
-  res.status(201).json(newTodo);
 });
 
 export default todosRouter;
