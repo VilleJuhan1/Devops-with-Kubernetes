@@ -1,4 +1,5 @@
 ---
+# PostgreSQL initialization script ConfigMap, which containts the SQL commands to set up the database schema.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -13,6 +14,7 @@ data:
       completed BOOLEAN NOT NULL DEFAULT FALSE
     );
 ---
+# Headless Service for PostgreSQL StatefulSet to enable stable network identity.
 apiVersion: v1
 kind: Service
 metadata:
@@ -21,13 +23,14 @@ metadata:
 spec:
   clusterIP: None
   selector:
-    app: to-do-postgres
+    app: to-do-postgres # Selector to match the PostgreSQL StatefulSet pods.
   ports:
     - port: 5432
       name: postgres
 ---
+# StatefulSet definition for PostgreSQL database used by the to-do application.
 apiVersion: apps/v1
-kind: StatefulSet
+kind: StatefulSet # The state needs to be preserved for the database even if the pod restarts.
 metadata:
   name: to-do-postgres
   namespace: project
@@ -52,7 +55,7 @@ spec:
               value: tododb
             - name: POSTGRES_USER
               value: appuser
-            - name: POSTGRES_PASSWORD
+            - name: POSTGRES_PASSWORD # Password is sourced from a Kubernetes Secret for security.
               valueFrom:
                 secretKeyRef:
                   name: to-do-postgres-secret
@@ -81,4 +84,4 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 100Mi
+            storage: 100Mi # Persistent storage claim for PostgreSQL data.

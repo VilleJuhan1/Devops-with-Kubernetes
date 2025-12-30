@@ -1,3 +1,7 @@
-# To-do App v2 for the project
+# To-do App
 
-Completely refactored version of the to-do app with both front- and backend functionalities. Dockerfiles present for local testing.
+Components:
+
+- React/Vite frontend, which uses nginx for deployment
+- Nodejs backend
+- Postgresql database

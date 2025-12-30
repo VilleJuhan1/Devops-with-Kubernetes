@@ -1,3 +1,4 @@
+# Used for encrypting secrets in this directory
 creation_rules:
   - encrypted_regex: "^(data|stringData)$"
     age: age12hlqsxnr76q884zjhzh3up3x9jpf939k29fu3vdmy5fxyhklcfmqs00g4x
