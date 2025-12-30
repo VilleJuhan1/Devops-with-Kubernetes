@@ -43,4 +43,5 @@ The link to the present release might be absent from the release itself but is p
 - [v0.2.4 The project, step 9](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.4)
 - [v0.2.5. Documentation and ConfigMaps](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.5)
 - [v0.2.6. The project, step 10](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.6)
-- [v0.2.7 Stateful applications](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.7)
+- [v0.2.7. Stateful applications](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.7)
+- [v0.2.8. The project, step 11](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.8)
