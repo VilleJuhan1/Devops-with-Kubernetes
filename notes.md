@@ -1221,3 +1221,46 @@ spec:
 ```
 
 [Running Postgres DB on a container](https://hub.docker.com/_/postgres)
+
+#### Job and Cronjobs
+
+An example backup job:
+
+```shell
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backup
+spec:
+  template:
+    spec:
+      containers:
+      - name: backup
+        image: jakousa/simple-backup-example
+        env:
+          - name: URL
+            value: "postgres://postgres:example@postgres-svc:5432/postgres"
+      restartPolicy: Never # This time we'll run it only once
+```
+
+```shell
+$ kubectl get jobs
+  NAME     COMPLETIONS   DURATION   AGE
+  backup   1/1           7s         35s
+
+$ kubectl logs backup-wj9r5
+  ...
+  pg_dump: saving encoding = UTF8
+  pg_dump: saving standard_conforming_strings = on
+  pg_dump: saving search_path =
+  pg_dump: implied data-only restore
+  Not sending the dump actually anywhere
+```
+
+```shell
+# A cronjob needs to be created first
+kubectl apply -f ./hourly-todo-post-cronjob.yaml
+
+# Additional one-time jobs can be created from the job template (ie. for testing)
+kubectl create job --from=cronjob/to-do-wiki-cronjob test-wiki-job2
+```

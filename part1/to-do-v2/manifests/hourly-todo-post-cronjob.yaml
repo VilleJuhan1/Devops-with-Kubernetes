@@ -1,0 +1,34 @@
+# CronJob to fetch a random Wikipedia article every hour and add it as a to-do item
+# Main purpose is testing out cronjobs in Kubernetes
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: to-do-wiki-cronjob
+  namespace: project
+spec:
+  schedule: "0 * * * *"
+  successfulJobsHistoryLimit: 3 # Keep history of last 3 successful jobs
+  failedJobsHistoryLimit: 3 # Keep history of last 3 failed jobs
+  jobTemplate:
+    spec:
+      backoffLimit: 2 # Retry up to 2 times on failure (Network issues, etc)
+      template:
+        spec:
+          restartPolicy: OnFailure # Restart job pod only on failure using the backoffLimit policy
+          containers:
+            - name: to-do-wiki-cronjob
+              image: curlimages/curl:latest # Lightweight image with curl installed
+              # Wiki-link is fetched from the response header key "Location" when accessing the Special:Random page
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+
+                  WIKI_URL=$(curl -Ls -o /dev/null -w "%{url_effective}" https://en.wikipedia.org/wiki/Special:Random)
+
+                  echo "Got article: $WIKI_URL"
+
+                  curl -s -X POST http://to-do-backend-svc:3005/api/todos \
+                    -H "Content-Type: application/json" \
+                    -d "{\"todo\":\"Read this article: $WIKI_URL\"}"
