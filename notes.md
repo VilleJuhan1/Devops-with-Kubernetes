@@ -1264,3 +1264,123 @@ kubectl apply -f ./hourly-todo-post-cronjob.yaml
 # Additional one-time jobs can be created from the job template (ie. for testing)
 kubectl create job --from=cronjob/to-do-wiki-cronjob test-wiki-job2
 ```
+
+### [Part 5: Monitoring](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-3/monitoring)
+
+Let's look into how Kubernetes applications are managed more easily with [Helm](https://helm.sh), the package manager for Kubernetes. Helm uses a packaging format called charts to define the dependencies of an application. Among other things, Helm charts include information for the version of the chart, the requirements of the application, such as the Kubernetes version as well as other charts that it may depend on.
+
+After installation configuration
+
+```shell
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+$ helm repo add stable https://charts.helm.sh/stable
+$ helm repo update
+```
+
+Installation of Prometheus for monitoring
+
+```shell
+$ kubectl create namespace prometheus
+$ helm install prometheus-community/kube-prometheus-stack --generate-name --namespace prometheus
+...
+NAME: kube-prometheus-stack-1767251485
+LAST DEPLOYED: Thu Jan  1 09:11:31 2026
+NAMESPACE: prometheus
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+NOTES:
+kube-prometheus-stack has been installed. Check its status by running:
+  kubectl --namespace prometheus get pods -l "release=kube-prometheus-stack-1767251485"
+
+Get Grafana 'admin' user password by running:
+
+  kubectl --namespace prometheus get secrets kube-prometheus-stack-1767251485-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+
+Access Grafana local instance:
+
+  export POD_NAME=$(kubectl --namespace prometheus get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=kube-prometheus-stack-1767251485" -oname)
+  kubectl --namespace prometheus port-forward $POD_NAME 3000
+
+Get your grafana admin user password by running:
+
+  kubectl get secret --namespace prometheus -l app.kubernetes.io/component=admin-secret -o jsonpath="{.items[0].data.admin-password}" | base64 --decode ; echo
+
+
+Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
+```
+
+Removing helm installed packages
+
+```shell
+helm list -n prometheus
+helm delete [name]
+```
+
+Opening a port for Grafana
+
+```shell
+$ kubectl get pods -n prometheus
+ NAME                                                              READY   STATUS    RESTARTS   AGE
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-nt8cp   1/1     Running   0          53s
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-ft7dg   1/1     Running   0          53s
+ kube-prometheus-stack-1602-operator-557c9c4f5-wbsqc               2/2     Running   0          53s
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-tr7ns   1/1     Running   0          53s
+ kube-prometheus-stack-1602180058-kube-state-metrics-55dccdkkz6w   1/1     Running   0          53s
+ alertmanager-kube-prometheus-stack-1602-alertmanager-0            2/2     Running   0          35s
+ kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m         2/2     Running   0          53s
+ prometheus-kube-prometheus-stack-1602-prometheus-0                3/3     Running   1          23s
+
+$ kubectl -n prometheus port-forward kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m 3000
+  Forwarding from 127.0.0.1:3000 -> 3000
+  Forwarding from [::1]:3000 -> 3000
+```
+
+Installing Loki
+
+```shell
+$ helm repo add grafana https://grafana.github.io/helm-charts
+$ helm repo update
+$ kubectl create namespace loki-stack
+  namespace/loki-stack created
+
+$ helm upgrade --install loki --namespace=loki-stack grafana/loki-stack --set loki.image.tag=2.9.3
+
+$ kubectl get all -n loki-stack
+  NAME                      READY   STATUS    RESTARTS   AGE
+  pod/loki-promtail-n2fgs   1/1     Running   0          18m
+  pod/loki-promtail-h6xq2   1/1     Running   0          18m
+  pod/loki-promtail-8l84g   1/1     Running   0          18m
+  pod/loki-0                1/1     Running   0          18m
+
+  NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+  service/loki            ClusterIP   10.43.170.68   <none>        3100/TCP   18m
+  service/loki-headless   ClusterIP   None           <none>        3100/TCP   18m
+
+  NAME                           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+  daemonset.apps/loki-promtail   3         3         3       3            3           <none>          18m
+
+  NAME                    READY   AGE
+  statefulset.apps/loki   1/1     18m
+```
+
+Modifying a helm deployment with a new datasource (loki)
+
+```shell
+kubectl get configmap -n prometheus | grep grafana\n
+kubectl get configmap kube-prometheus-stack-1767-grafana-datasource -n prometheus -o yaml\n
+kubectl get all -n prometheus
+vi values.yaml
+grafana:
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki.loki-stack.svc.cluster.local:3100
+      isDefault: false
+      jsonData:
+        timeout: 60
+
+helm list -A
+helm upgrade kube-prometheus-stack-1767251485 prometheus-community/kube-prometheus-stack \\n  -n prometheus \\n  -f values.yaml\n
+```
