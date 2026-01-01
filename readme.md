@@ -46,3 +46,4 @@ The link to the present release might be absent from the release itself but is p
 - [v0.2.7. Stateful applications](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.7)
 - [v0.2.8. The project, step 11](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.8)
 - [v.0.2.9 The project, step 12](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.9)
+- [v.0.2.10 The project, step 13](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.10)
