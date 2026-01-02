@@ -124,6 +124,9 @@ def health():
     except Exception:
         return "db not ready", 503
 
+@app.route("/", methods=["GET"])
+def index():
+    return "Hello world! Access /pingpong to play ping-pong.", 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8085)

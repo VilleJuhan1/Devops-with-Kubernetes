@@ -55,5 +55,9 @@ def logs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/", methods=["GET"])
+def index():
+    return "Hello world! Access /logs to see the latest log entry.", 200
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8081)

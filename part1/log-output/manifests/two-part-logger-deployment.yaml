@@ -24,13 +24,13 @@ spec:
         #    claimName: ping-pong-log-output-volume
       containers:
         - name: logger
-          image: villejuhan1/log-output:logger
+          image: villejuhan1/log-output:logger-gc
           imagePullPolicy: Always
           volumeMounts: # Mount volume
             - name: log-data
               mountPath: /log
         - name: log-response
-          image: villejuhan1/log-output:reader
+          image: villejuhan1/log-output:web-gc
           imagePullPolicy: Always
           env:
             - name: PINGS_API
