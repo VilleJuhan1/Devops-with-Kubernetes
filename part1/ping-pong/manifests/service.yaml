@@ -4,7 +4,8 @@ metadata:
   namespace: exercises
   name: ping-pong-svc
 spec:
-  type: ClusterIP
+  type: LoadBalancer # Cloud default
+  # type: ClusterIP <-- Change to ClusterIP if LoadBalancer is not supported, ie. on local clusters
   selector:
     app: ping-pong
   ports:

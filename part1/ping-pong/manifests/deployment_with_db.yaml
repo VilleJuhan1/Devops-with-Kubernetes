@@ -15,13 +15,14 @@ spec:
     spec:
       containers:
         - name: ping-pong
-          image: villejuhan1/ping-pong:postgres
+          image: villejuhan1/ping-pong:postgres-gc # <- Use Postgres enabled image that supports both arm and amd64
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
           env:
             - name: DEV_MODE
-              value: "true"
+              # value: "true"
+              value: "false" # <- POST to /reset doesn't work with dev mode off
             - name: DATABASE_HOST
               value: ping-pong-postgres-svc
             - name: DATABASE_PORT

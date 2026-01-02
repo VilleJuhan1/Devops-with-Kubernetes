@@ -61,6 +61,14 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
+            - name: POSTGRES_SHARED_BUFFERS
+              value: "64MB"
+            - name: POSTGRES_WORK_MEM
+              value: "2MB"
+            - name: POSTGRES_MAINTENANCE_WORK_MEM
+              value: "16MB"
+            - name: POSTGRES_MAX_CONNECTIONS
+              value: "20"
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
@@ -76,6 +84,9 @@ spec:
             requests:
               cpu: 50m
               memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
       volumes:
         - name: init-script
           configMap:

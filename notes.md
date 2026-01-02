@@ -1384,3 +1384,78 @@ grafana:
 helm list -A
 helm upgrade kube-prometheus-stack-1767251485 prometheus-community/kube-prometheus-stack \\n  -n prometheus \\n  -f values.yaml\n
 ```
+
+## [Chapter 4 - To the cloud](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-4)
+
+Installation on MacOS
+
+```shell
+brew install --cask google-cloud-sdk
+```
+
+Login and choose the project
+
+```shell
+$ gcloud -v
+  Google Cloud SDK 471.0.0
+  bq 2.1.3
+  core 2024.03.29
+  gcloud-crc32c 1.0.0
+  gsutil 5.27
+
+$ gcloud auth login
+  ...
+  You are now logged in
+
+$ gcloud config set project dwk-gke-idhere
+  Updated property [core/project].
+```
+
+Create a Kubernetes cluster
+
+```shell
+$ gcloud services enable container.googleapis.com
+  Operation "operations/acf.p2-385245615727-2f855eed-e785-49ac-91da-896925a691ab" finished successfully.
+
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.32 --disk-size=32 --num-nodes=3 --machine-type=e2-micro
+  ...
+  Creating cluster dwk-cluster in europe-north1-b...
+  ...
+  kubeconfig entry generated for dwk-cluster.
+  NAME         LOCATION         MASTER_VERSION   MASTER_IP       MACHINE_TYPE  NODE_VERSION     NUM_NODES  STATUS
+  dwk-cluster  europe-north1-b  1.29.8-gke.2200  35.228.176.118  e2-medium     1.29.8-gke.2200  3          RUNNING
+```
+
+An alternative better suited for the course requirements
+
+```shell
+gcloud container clusters create gc-kubehelvetti-2 \
+  --zone=europe-north1-b \
+  --cluster-version=latest \
+  --machine-type=e2-medium \
+  --num-nodes=1 \
+  --enable-autoscaling \
+  --min-nodes=1 \
+  --max-nodes=3 \
+  --disk-size=32
+```
+
+If the command does not work, you need to install gke-gcloud-auth-plugin by following [this](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin).
+
+Checking cluster-info
+
+```shell
+$ kubectl cluster-info
+Kubernetes control plane is running at https://35.238.53.231
+GLBCDefaultBackend is running at https://35.238.53.231/api/v1/namespaces/kube-system/services/default-http-backend:http/proxy
+KubeDNS is running at https://35.238.53.231/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Metrics-server is running at https://35.238.53.231/api/v1/namespaces/kube-system/services/https:metrics-server:/proxy
+```
+
+If the cluster is still pointing to local cluster
+
+```shell
+$ gcloud container clusters get-credentials dwk-cluster --zone=europe-north1-b
+  Fetching cluster endpoint and auth data.
+  kubeconfig entry generated for dwk-cluster.
+```
