@@ -1535,3 +1535,5 @@ my-gateway   gke-l7-gxlb   35.227.224.141   True         106m
 # another helpful command
 kubectl describe gateway my-gateway
 ```
+
+[HTTP path redirects and rewrites](https://gateway-api.sigs.k8s.io/guides/http-redirect-rewrite/) are used so that we do not need to de

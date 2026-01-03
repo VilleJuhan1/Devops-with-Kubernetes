@@ -6,11 +6,26 @@ spec:
   parentRefs:
     - name: gc-kubehelvetti-gw
   rules:
+    # ping-pong at /pingpong
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /pingpong
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: ping-pong-svc
+          port: 80
+
+    # log-output at /
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
         - name: log-output-svc
-          namespace: exercises
           port: 80

@@ -34,7 +34,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: PINGS_API
-              value: "http://ping-pong-svc:2347"
+              value: "http://ping-pong-svc:80"
             - name: LOG_PATH
               value: "/log"
             - name: CONFIG_MESSAGE
