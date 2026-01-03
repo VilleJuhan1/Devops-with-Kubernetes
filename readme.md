@@ -15,6 +15,20 @@ k3d cluster create kubehelvetti \
   --volume "/tmp/kubedata/to-do-assets-pv:/tmp/kubedata/to-do-assets-pv@agent:*"
 ```
 
+The GKE cluster I used on the course:
+
+```shell
+gcloud container clusters create testiklusteri \
+  --zone=europe-north1-b \
+  --cluster-version=latest \
+  --machine-type=e2-medium \
+  --num-nodes=1 \
+  --enable-autoscaling \
+  --min-nodes=1 \
+  --max-nodes=3 \
+  --disk-size=32
+```
+
 ## Submissions
 
 The link to the present release might be absent from the release itself but is present in the latest commit.
