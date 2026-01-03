@@ -1,3 +1,5 @@
+# Ingress for log-output and ping-pong services
+# Don't use with GKE Gateway API enabled clusters, use HTTPRoute instead
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

@@ -1387,6 +1387,8 @@ helm upgrade kube-prometheus-stack-1767251485 prometheus-community/kube-promethe
 
 ## [Chapter 4 - To the cloud](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-4)
 
+### [Part 1: Introduction to Google Kubernetes Engine](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-4/introduction-to-google-kubernetes-engine)
+
 Installation on MacOS
 
 ```shell
@@ -1458,4 +1460,78 @@ If the cluster is still pointing to local cluster
 $ gcloud container clusters get-credentials dwk-cluster --zone=europe-north1-b
   Fetching cluster endpoint and auth data.
   kubeconfig entry generated for dwk-cluster.
+```
+
+#### Gateway API
+
+The [Gateway API](https://gateway-api.sigs.k8s.io/) is a set of resources and standards that allow you to define how external traffic should be routed to services within your Kubernetes cluster. It builds on the ingress concept but offers more advanced features, making it easier to handle complex routing and traffic management scenarios.
+
+```shell
+$ gcloud container clusters update clustername --location=europe-north1-b --gateway-api=standard
+```
+
+Defining gateway.yaml file
+
+```shell
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+spec:
+  gatewayClassName: gke-l7-global-external-managed
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      kinds:
+      - kind: HTTPRoute
+```
+
+We also need to define route.yaml
+
+```shell
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: my-route
+spec:
+  parentRefs:
+  - name: my-gateway
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: seedimage-svc
+      port: 80
+```
+
+Service needs to be configured back into ClusterIP
+
+```shell
+apiVersion: v1
+kind: Service
+metadata:
+  name: seedimage-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: seedimage
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000
+```
+
+Gateway object tells us the IP address of the cluster
+
+```shell
+$ kubectl get gateway my-gateway
+NAME         CLASS         ADDRESS          PROGRAMMED   AGE
+my-gateway   gke-l7-gxlb   35.227.224.141   True         106m
+
+# another helpful command
+kubectl describe gateway my-gateway
 ```
