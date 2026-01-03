@@ -65,3 +65,6 @@ The link to the present release might be absent from the release itself but is p
 ### Part 3
 
 - [v.0.3.1, Pingpong GKE](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.1)
+- [v.0.3.2. Back to Ingress](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.2)
+- [v.0.3.3. To the Gateway](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.3)
+- [v.0.3.4. Rewritten routing](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.4)
