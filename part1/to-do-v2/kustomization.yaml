@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# Define all the resources for to-do-v2 application with GKE Gateway API
+# to-do-postgres-secret needs to be deployed manually beforehand
+resources:
+  - manifests/gc-kubehelvetti-gw.yaml
+  - manifests/gc-kubehelvetti-httproute.yaml
+  - manifests/project-namespace.yaml
+  - manifests/to-do-postgres-statefulset.yaml
+  - manifests/to-do-frontend-svc.yaml
+  - manifests/to-do-volume.yaml
+  - manifests/to-do-backend-deployment.yaml
+  - manifests/to-do-frontend-deployment.yaml
+images:
+  - name: to-do-backend
+    newName: villejuhan1/todo-backend
+    newTag: postgres-v2
+  - name: to-do-frontend
+    newName: villejuhan1/todo-frontend
+    newTag: latest

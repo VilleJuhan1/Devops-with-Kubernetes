@@ -1537,3 +1537,25 @@ kubectl describe gateway my-gateway
 ```
 
 [HTTP path redirects and rewrites](https://gateway-api.sigs.k8s.io/guides/http-redirect-rewrite/) are used so that we do not need to de
+
+### [Part 2: Deployment Pipeline](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-4/deployment-pipeline)
+
+[Kustomize](https://github.com/kubernetes-sigs/kustomize) is a tool that helps with configuration customization and is baked into kubectl. In this case we'll use it to define which files are meaningful for Kubernetes.
+
+Follow the common practice and add the configuration file kustomization.yaml, in the root of the project. The kustomization.yaml should include instructions on how to use the deployment.yaml and service.yaml:
+
+```shell
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - manifests/deployment.yaml
+  - manifests/service.yaml
+
+# Apply
+$ kubectl apply -k .
+
+# ... Or do a dry run
+$ kubectl kustomize .
+```
+
+[Kustomize cheat sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f)

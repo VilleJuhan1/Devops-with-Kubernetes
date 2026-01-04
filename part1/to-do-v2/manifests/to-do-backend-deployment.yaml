@@ -28,7 +28,8 @@ spec:
     spec:
       containers:
         - name: to-do-backend
-          image: villejuhan1/todo-backend:postgres
+          image: to-do-backend # <- Defined in the Kustomize file
+          imagePullPolicy: Always
           ports:
             - containerPort: 3005
           envFrom:

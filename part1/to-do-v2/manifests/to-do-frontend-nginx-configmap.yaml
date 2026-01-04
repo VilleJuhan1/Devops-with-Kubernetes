@@ -1,0 +1,33 @@
+# Don't use this, just for test
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: to-do-frontend-nginx-config
+  namespace: project
+data:
+  default.conf: |
+    server {
+      listen 80;
+
+      # Handle /todo/* requests
+      location /todo/ {
+        alias /usr/share/nginx/html/;
+        index index.html;
+        try_files $uri $uri/ /todo/index.html;
+      }
+
+      # Root location for health checks
+      location = / {
+        root /usr/share/nginx/html;
+        index index.html;
+      }
+
+      location /api/ {
+          resolver 127.0.0.11;   # Kubernetes internal DNS
+          rewrite ^/api/(.*)$ /$1 break;
+          proxy_pass http://to-do-backend-svc:3005;
+          proxy_http_version 1.1;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+      }
+    }

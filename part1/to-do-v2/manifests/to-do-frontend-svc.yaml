@@ -8,6 +8,6 @@ spec:
     app: to-do-frontend
   ports:
     - protocol: TCP
-      port: 2345
+      port: 80
       targetPort: 80
   type: ClusterIP
