@@ -1,0 +1,22 @@
+kind: HTTPRoute
+metadata:
+  name: dev-to-do-route
+spec:
+  parentRefs:
+    - name: gc-kubehelvetti-gw
+      namespace: default
+  rules:
+    # dev-to-do-frontend at /todo (must come before catch-all /)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /todo
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: dev-to-do-frontend-svc
+          port: 80

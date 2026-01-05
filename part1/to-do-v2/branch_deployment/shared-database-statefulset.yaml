@@ -1,0 +1,84 @@
+---
+# PostgreSQL initialization script ConfigMap, which containts the SQL commands to set up the database schema.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: database
+data:
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS todos (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      todo TEXT NOT NULL,
+      completed BOOLEAN NOT NULL DEFAULT FALSE
+    );
+---
+# Headless Service for PostgreSQL StatefulSet to enable stable network identity.
+apiVersion: v1
+kind: Service
+metadata:
+  name: to-do-postgres-svc
+  namespace: database
+spec:
+  clusterIP: None
+  selector:
+    app: to-do-postgres # Selector to match the PostgreSQL StatefulSet pods.
+  ports:
+    - port: 5432
+      name: postgres
+---
+# StatefulSet definition for PostgreSQL database used by the to-do application.
+apiVersion: apps/v1
+kind: StatefulSet # The state needs to be preserved for the database even if the pod restarts.
+metadata:
+  name: to-do-postgres
+  namespace: database
+spec:
+  serviceName: to-do-postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: to-do-postgres
+  template:
+    metadata:
+      labels:
+        app: to-do-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: tododb
+            - name: POSTGRES_USER
+              value: appuser
+            - name: POSTGRES_PASSWORD # Password is sourced from a Kubernetes Secret for security.
+              value: development
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "appuser", "-d", "tododb"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: initdb
+          configMap:
+            name: postgres-init
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 100Mi # Persistent storage claim for PostgreSQL data.

@@ -1,0 +1,9 @@
+# Namespace for to-do project
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: database
+  labels:
+    name: database
+---
+

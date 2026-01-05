@@ -1,0 +1,13 @@
+# ReferenceGrant to allow HTTPRoute in 'project' namespace to reference Service in 'default' namespace
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-default-gateway
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      namespace: default
+  to:
+    - group: ""
+      kind: Service
