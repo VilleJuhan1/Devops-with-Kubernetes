@@ -17,6 +17,11 @@ spec:
         - name: to-do-frontend
           image: to-do-frontend # <- Defined in the to-do-v2 kustomization file
           imagePullPolicy: Always
+          env:
+            - name: VITE_TODOS_URL
+              value: todo/api/todos
+            - name: VITE_IMAGE_URL
+              value: todo/api/assets/random.jpg
           ports:
             - containerPort: 80
           readinessProbe:
