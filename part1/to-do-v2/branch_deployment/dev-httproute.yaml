@@ -1,22 +1,25 @@
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: dev-to-do-route
+  name: ${ENV_NAME}-to-do-route
 spec:
   parentRefs:
     - name: gc-kubehelvetti-gw
       namespace: default
   rules:
-    # dev-to-do-frontend at /todo (must come before catch-all /)
+    # dev-to-do-frontend at /development
     - matches:
         - path:
             type: PathPrefix
-            value: /todo
+            value: /${ENV_NAME}
       filters:
         - type: URLRewrite
           urlRewrite:
             path:
               type: ReplacePrefixMatch
-              replacePrefixMatch: /
+              replacePrefixMatch: / # only for SPA frontend
+
       backendRefs:
-        - name: dev-to-do-frontend-svc
+        - name: to-do-frontend-svc
+          namespace: ${ENV_NAME}
           port: 80

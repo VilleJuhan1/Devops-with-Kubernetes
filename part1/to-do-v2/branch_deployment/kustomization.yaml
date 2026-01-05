@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - dev-httproute.yaml
   - dev-referencegrant.yaml
+  - dev-to-do-volume.yaml
   - dev-to-do-backend-deployment.yaml
   - dev-to-do-frontend-deployment.yaml
   - dev-to-do-frontend-svc.yaml

@@ -1,0 +1,24 @@
+# PV definition is commented out to use dynamic provisioning via StorageClass
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: backend-assets-pv
+#   namespace: project
+# spec:
+#   capacity:
+#     storage: 1Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   hostPath:
+#     path: /tmp/kubedata/to-do-assets-pv
+# ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-assets-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi

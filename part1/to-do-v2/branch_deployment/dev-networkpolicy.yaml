@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-namespaces-to-postgres
+  namespace: database
+spec:
+  podSelector:
+    matchLabels:
+      app: to-do-postgres # select your Postgres pods
+  ingress:
+    - from:
+        - podSelector: {} # allow pods from all namespaces
+      ports:
+        - protocol: TCP
+          port: 5432
+  policyTypes:
+    - Ingress
