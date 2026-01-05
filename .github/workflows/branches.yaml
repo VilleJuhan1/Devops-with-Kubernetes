@@ -56,13 +56,12 @@ jobs:
 
           cd part1/to-do-v2/branch_deployment
 
-          ENV_NAME=${GITHUB_REF#refs/heads/}
-          export ENV_NAME
+          export ENV_NAME=${GITHUB_REF#refs/heads/}
 
           kustomize edit set image to-do-backend=$REGISTRY/$PROJECT_ID/$REPOSITORY/dev-todo-backend:${{ github.sha }}
           kustomize edit set image to-do-frontend=$REGISTRY/$PROJECT_ID/$REPOSITORY/dev-todo-frontend:${{ github.sha }}
 
-          kustomize build . | kubectl apply -f -
+          kustomize build . | envsubst | kubectl apply -f -
 
           kubectl rollout status deployment dev-to-do-backend
           kubectl rollout status deployment dev-to-do-frontend

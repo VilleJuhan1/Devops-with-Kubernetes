@@ -3,7 +3,7 @@ name: Deploy To-do-v2 app to GKE
 on:
   push:
     branches:
-      - main
+      - mainers # Don't want to trigger this all the time, change to "main" if necessary.
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}

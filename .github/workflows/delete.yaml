@@ -12,6 +12,7 @@ jobs:
       PROJECT_ID: ${{ secrets.GKE_PROJECT }}
       GKE_CLUSTER: gc-kubehelvetti-2
       GKE_ZONE: europe-north1-b
+      BRANCH_NAME: ${{ github.ref_name }}
 
     steps:
       - name: Checkout
@@ -37,5 +38,14 @@ jobs:
 
       - name: Delete environment namespace
         run: |
-          echo "Deleting namespace corresponding to branch $GITHUB_REF_NAME"
-          kubectl delete namespace "$GITHUB_REF_NAME" || echo "Namespace does not exist, skipping."
+          BRANCH_NAME="${{ github.event.ref }}"
+          echo "Branch deleted: $BRANCH_NAME"
+
+          # Prevent deletion of main/master namespaces
+          if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "master" ]]; then
+            echo "Skipping deletion of protected branch namespace: $BRANCH_NAME"
+            exit 0
+          fi
+
+          echo "Deleting namespace: $BRANCH_NAME"
+          kubectl delete namespace "$BRANCH_NAME" || echo "Namespace does not exist, skipping."
