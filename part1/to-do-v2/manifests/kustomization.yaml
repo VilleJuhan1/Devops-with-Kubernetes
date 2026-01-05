@@ -1,0 +1,14 @@
+# Used for to-do-v2 CI/CD pipeline, doesn't include everything, just the necessary parts
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: project
+
+resources:
+  - to-do-backend-deployment.yaml
+  - to-do-frontend-deployment.yaml
+  - to-do-frontend-svc.yaml
+
+images:
+  - name: to-do-backend
+  - name: to-do-frontend
