@@ -1,5 +1,5 @@
 function RandomImage() {
-  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL || 'api/assets/random.jpg';
+  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL || 'todo/api/assets/random.jpg';
   return (
     <div className="random-image">
       <img

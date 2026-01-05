@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_TODOS_URL || 'api/todos';
+const API_URL = import.meta.env.VITE_TODOS_URL || 'todo/api/todos';
 
 // Haetaan todot rajapinnasta
 export async function fetchTodos() {
