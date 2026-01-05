@@ -1559,3 +1559,106 @@ $ kubectl kustomize .
 ```
 
 [Kustomize cheat sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f)
+
+#### GitHub Actions
+
+Our GitHub Actions workflow will push Docker images to Google Artifact Registry.
+
+Now we are ready to define the workflow in the file .github/workflows/main.yaml. We'll want the workflow to do 3 things:
+
+- build the image
+- publish the image to a container registry
+- deploy the new image to our cluster
+
+The config will look something like this:
+
+```shell
+name: Release application
+
+on:
+  push:
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  REGISTRY: europe-north1-docker.pkg.dev
+  REPOSITORY: my-repository
+  IMAGE: dwk-environments
+  SERVICE: dwk-environments
+  BRANCH: ${{ github.ref_name }}
+
+# ...
+jobs:
+  build-publish-deploy:
+    name: Build, Publish and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Use gcloud CLI'
+        run: gcloud info
+
+      - name: 'Configure Docker'
+        run: gcloud --quiet auth configure-docker
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name : 'Form the image name'
+        run: echo "IMAGE_TAG=$REGISTRY/$PROJECT_ID/$REPOSITORY/$IMAGE:$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
+
+      - name: Build
+        run: docker build --tag $IMAGE_TAG .
+
+      - name: Publish
+        run: docker push $IMAGE_TAG
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Deploy
+        run: |-
+          kubectl create namespace ${GITHUB_REF#refs/heads/} || true
+          kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
+          kustomize edit set namespace ${GITHUB_REF#refs/heads/}
+          kustomize edit set image PROJECT/IMAGE=$IMAGE_TAG
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment $SERVICE
+          kubectl get services -o wide
+
+```
+
+The secrets used in authentication are not from the environment variables but are included as environment secrets in the project GitHub.
+
+The secret GKE_PROJECT is the Google Cloud project ID, that you find in the Google Cloud console.
+
+The secret GKE_SA_KEY is a service account key that is required to access the Google Cloud services. You will need to create a new service account and fetch its key. Creation happens in the IAM&Admin / Service account section in the Google Cloud Console.
+
+Give these IAM roles to your service account:
+
+- Kubernetes Engine Service Agent - Gives Kubernetes Engine account access to manage cluster resources. Includes access to service accounts.
+- Storage Admin - Grants full control of buckets and objects.
+- Artifact Registry Administrator - Administrator access to create and manage repositories.
+- Artifact Registry Create-on-Push Repository Administrator - Access to manage artifacts in repositories, as well as create new repositories on push.
+
+_Giving IAM roles is also done using the Console by selectiong IAM&Admin/IAM._
+
+After creating the service account, create the authentication key:
+
+```shell
+$ gcloud iam service-accounts keys create ./private-key.json --iam-account=github-actions@dwk-gke-331210.iam.gserviceaccount.com
+```
