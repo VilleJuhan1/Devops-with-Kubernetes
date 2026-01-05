@@ -2,6 +2,7 @@ name: Delete branch environment
 
 on:
   delete:
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   cleanup:
@@ -9,8 +10,8 @@ jobs:
 
     env:
       PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-      GKE_CLUSTER: your-cluster-name
-      GKE_ZONE: your-cluster-zone
+      GKE_CLUSTER: gc-kubehelvetti-2
+      GKE_ZONE: europe-north1-b
 
     steps:
       - name: Checkout
