@@ -2,6 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: ${ENV_NAME}-to-do-route
+  namespace: ${ENV_NAME}
 spec:
   parentRefs:
     - name: gc-kubehelvetti-gw
@@ -17,8 +18,7 @@ spec:
           urlRewrite:
             path:
               type: ReplacePrefixMatch
-              replacePrefixMatch: / # only for SPA frontend
-
+              replacePrefixMatch: /
       backendRefs:
         - name: to-do-frontend-svc
           namespace: ${ENV_NAME}
