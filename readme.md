@@ -68,3 +68,29 @@ The link to the present release might be absent from the release itself but is p
 - [v.0.3.2. Back to Ingress](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.2)
 - [v.0.3.3. To the Gateway](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.3)
 - [v.0.3.4. Rewritten routing](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.4)
+- [v.0.3.5. The project, step 14](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.5)
+- [v.0.3.6. The project, step 15](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.6)
+- [v.0.3.7. The project, step 16](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.7)
+- [v.0.3.8. The project, step 17](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.8)
+
+#### Exercise 3.9. DBaas vs DIY
+
+The exercise requested to make a comparison between two possible database implementations in a cloud environment. The other is DB as a service, or DBaaS, and the other is an own container deployment with the required infrastructure (cronjobs, pvc etc.) We call this the "Do it yourself" solution, or in short, DIY. As this comparison is by nature, not very scientific, I will use various types of sources, from anecdotes to LLMs etc.
+
+Starting with a [reddit conversation](https://www.reddit.com/r/kubernetes/comments/wie6n3/k8s_with_eks_aks_or_gke_considering_a_enterprise/), the OP asks if one should DB related services in cloud. The consensus seem to be that there a pros and cons in both. Service is better if you have the money, own deployment if you have the time. Another user comments that running as much as possible inside a cluster, makes you more cloud-agnostic. From a presentation in [Postgresql EU community site](https://www.postgresql.eu/events/pgdayparis2022/sessions/session/3612/slides/294/PostgreSQL%20in%20the%20Cloud_%20DBaaS%20vs%20Kubernetes.pdf), similar voice can be heard. DBaaS is easy, but not very cost-efficient.
+
+How about on practise though? What are the costs? It seems most cloud provider DBaaS are quite close in [costs](https://benchant.com/blog/postgresql-dbaas-performance-costs). Asking the Copilot to count me the costs of a small instance, 2 vCPU, 8GB RAM, 100GB storage and moderate traffic, using Azure pricing table, have me to following comparison:
+
+| Feature            | AKS (Self‑Managed) | Azure DBaaS |
+| ------------------ | -----------------: | ----------: |
+| Monthly Cost       |           €10–€110 |   €130–€300 |
+| Backups            |       You build it |    Included |
+| HA                 |       You build it |    Built‑in |
+| Patching           |                You |   Automatic |
+| Monitoring         |                You |    Built‑in |
+| SLA                |               None |         Yes |
+| Operational burden |               High |           — |
+
+The AKS (Azure Kubernetes Service) cost depends highly on if a shared or dedicated node is used and if there's high-availability requirement. The Self-Managed doesn't also factor in the backup costs. When taking into account everything required for self-managed and service, ie. WAL archiving, storage management, monitoring etc., the cost of DBaaS soon becomes soon a non-factor. Still, the knowledge and expertise gain shouldn't either be undervalued. Being able to do everything, and understand the whole stack, is atleast to me, a really valuable position to thrive for. It also makes you agnostic in where you deploy your workloads, atleast in theory.
+
+In summary, DBaaS is still in many aspects the better solution, atleast if you don't have wide knowledge in DB administration or a team for it. Even then, the cost might actually be quite equivalent, because the DBaaS has a competitive edge due to a shared infrastructure. By building everything yourself, you pay also for the overhead, in addition to the labor. For this course, I think taking the DBaaS route could be more fruitful as I've yet to try it. I will be returning to containerized postgresql in other courses, like the Fullstack MOOC end project. I also seem to have ample credits left in the trial, so might as well use them.

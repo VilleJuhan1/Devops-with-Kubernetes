@@ -39,7 +39,6 @@ jobs:
       - name: Delete environment namespace
         run: |
           BRANCH_NAME="${{ github.event.ref }}"
-          echo "Branch deleted: $BRANCH_NAME"
 
           # Prevent deletion of main/master namespaces
           if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "master" ]]; then
