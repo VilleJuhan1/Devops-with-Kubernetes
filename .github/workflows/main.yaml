@@ -59,6 +59,8 @@ jobs:
           kustomize edit set image to-do-backend=$REGISTRY/$PROJECT_ID/$REPOSITORY/todo-backend:${{ github.sha }}
           kustomize edit set image to-do-frontend=$REGISTRY/$PROJECT_ID/$REPOSITORY/todo-frontend:${{ github.sha }}
 
+          kubectl delete deployment to-do-backend || true
+
           kustomize build . | kubectl apply -f -
 
           kubectl rollout status deployment to-do-backend
