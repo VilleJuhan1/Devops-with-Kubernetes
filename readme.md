@@ -96,3 +96,5 @@ The AKS (Azure Kubernetes Service) cost depends highly on if a shared or dedicat
 In summary, DBaaS is still in many aspects the better solution, atleast if you don't have wide knowledge in DB administration or a team for it. Even then, the cost might actually be quite equivalent, because the DBaaS has a competitive edge due to a shared infrastructure. By building everything yourself, you pay also for the overhead, in addition to the labor. For this course, I think taking the DBaaS route could be more fruitful as I've yet to try it. I will be returning to containerized postgresql in other courses, like the Fullstack MOOC end project. I also seem to have ample credits left in the trial, so might as well use them.
 
 - [v.0.3.9. DBaas vs. DIY](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.9)
+- [v.0.3.10 The project, step 18](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.10)
+- [v.0.3.11 The project, step 19](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.11)
