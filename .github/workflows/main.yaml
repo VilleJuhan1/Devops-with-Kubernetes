@@ -3,7 +3,7 @@ name: Deploy To-do-v2 app to GKE
 on:
   push:
     branches:
-      - main # Don't want to trigger this all the time, change to "main" if necessary.
+      - mainers # Don't want to trigger this all the time, change to "main" if necessary.
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
@@ -59,7 +59,7 @@ jobs:
           kustomize edit set image to-do-backend=$REGISTRY/$PROJECT_ID/$REPOSITORY/todo-backend:${{ github.sha }}
           kustomize edit set image to-do-frontend=$REGISTRY/$PROJECT_ID/$REPOSITORY/todo-frontend:${{ github.sha }}
 
-          kubectl delete deployment to-do-backend || true
+          kubectl delete deployment to-do-backend -n $NAMESPACE || true
 
           kustomize build . | kubectl apply -f -
 

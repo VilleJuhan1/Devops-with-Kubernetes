@@ -110,3 +110,4 @@ Logging enabled and reviewable in the Logs Explorer in Google Cloud Console:
 ### Part 4
 
 - [v.0.4.1. Readines probe](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.1)
+- [v.0.4.2. The project, step 21](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.2)
