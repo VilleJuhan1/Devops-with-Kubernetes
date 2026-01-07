@@ -35,30 +35,30 @@ The link to the present release might be absent from the release itself but is p
 
 ### Part 1
 
-- [v0.1.1 Log output](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.1)
-- [v0.1.2 The project, step 1](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.2)
-- [v0.1.3 Declarative approach](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.3)
-- [v0.1.4 The project, step 2](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.4)
-- [v0.1.5 The project, step 3](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.5)
-- [v0.1.6 The project, step 4](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.6)
-- [v0.1.7 External access with Ingress](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.7)
-- [v0.1.8 The project, step 5](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.8)
-- [v0.1.9 More services](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.9)
-- [v0.1.10 Even more services](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.10)
-- [v0.1.11 Persisting data](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.11)
-- [v0.1.12 The project, step 6](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.12)
-- [v0.1.13 The project, step 7](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.13)
+- [v.0.1.1 Log output](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.1)
+- [v.0.1.2 The project, step 1](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.2)
+- [v.0.1.3 Declarative approach](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.3)
+- [v.0.1.4 The project, step 2](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.4)
+- [v.0.1.5 The project, step 3](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.5)
+- [v.0.1.6 The project, step 4](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.6)
+- [v.0.1.7 External access with Ingress](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.7)
+- [v.0.1.8 The project, step 5](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.8)
+- [v.0.1.9 More services](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.9)
+- [v.0.1.10 Even more services](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.10)
+- [v.0.1.11 Persisting data](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.11)
+- [v.0.1.12 The project, step 6](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.12)
+- [v.0.1.13 The project, step 7](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/1.13)
 
 ### Part 2
 
-- [v0.2.1 Connecting pods](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.1)
-- [v0.2.2 The project, step 8](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.2)
-- [v0.2.3 Keep them separated](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.3)
-- [v0.2.4 The project, step 9](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.4)
-- [v0.2.5. Documentation and ConfigMaps](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.5)
-- [v0.2.6. The project, step 10](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.6)
-- [v0.2.7. Stateful applications](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.7)
-- [v0.2.8. The project, step 11](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.8)
+- [v.0.2.1 Connecting pods](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.1)
+- [v.0.2.2 The project, step 8](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.2)
+- [v.0.2.3 Keep them separated](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.3)
+- [v.0.2.4 The project, step 9](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.4)
+- [v.0.2.5. Documentation and ConfigMaps](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.5)
+- [v.0.2.6. The project, step 10](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.6)
+- [v.0.2.7. Stateful applications](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.7)
+- [v.0.2.8. The project, step 11](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.8)
 - [v.0.2.9 The project, step 12](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.9)
 - [v.0.2.10 The project, step 13](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/2.10)
 
@@ -96,8 +96,8 @@ The AKS (Azure Kubernetes Service) cost depends highly on if a shared or dedicat
 In summary, DBaaS is still in many aspects the better solution, atleast if you don't have wide knowledge in DB administration or a team for it. Even then, the cost might actually be quite equivalent, because the DBaaS has a competitive edge due to a shared infrastructure. By building everything yourself, you pay also for the overhead, in addition to the labor. For this course, I think taking the DBaaS route could be more fruitful as I've yet to try it. I will be returning to containerized postgresql in other courses, like the Fullstack MOOC end project. I also seem to have ample credits left in the trial, so might as well use them.
 
 - [v.0.3.9. DBaas vs. DIY](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.9)
-- [v.0.3.10 The project, step 18](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.10)
-- [v.0.3.11 The project, step 19](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.11)
+- [v.0.3.10. The project, step 18](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.10)
+- [v.0.3.11. The project, step 19](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.11)
 
 #### Exercise 3.12. The project, step 20
 
@@ -105,4 +105,8 @@ Logging enabled and reviewable in the Logs Explorer in Google Cloud Console:
 
 ![Image of logging](./assets/3.12.to-do-logging.png "Event logged when posting a new todo")
 
-- [v.0.3.12 The project, step 20](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.12)
+- [v.0.3.12. The project, step 20](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.12)
+
+### Part 4
+
+- [v.0.4.1. Readines probe](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.1)
