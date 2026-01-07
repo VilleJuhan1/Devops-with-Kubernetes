@@ -98,3 +98,9 @@ In summary, DBaaS is still in many aspects the better solution, atleast if you d
 - [v.0.3.9. DBaas vs. DIY](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.9)
 - [v.0.3.10 The project, step 18](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.10)
 - [v.0.3.11 The project, step 19](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/3.11)
+
+#### Exercise 3.12. The project, step 20
+
+Logging enabled and reviewable in the Logs Explorer in Google Cloud Console:
+
+![Image of logging](./assets/3.12.to-do-logging.png "Event logged when posting a new todo")
