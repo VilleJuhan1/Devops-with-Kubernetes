@@ -119,3 +119,5 @@ The query for listing the pods created by StatefulSets:
 ```promsql
 count(kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"})
 ```
+
+- [v.0.4.3. Prometheus](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.3)
