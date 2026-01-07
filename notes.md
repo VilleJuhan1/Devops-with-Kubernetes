@@ -1703,4 +1703,96 @@ gcloud iam service-accounts add-iam-policy-binding \
 
 ```
 
+Use the service account in a backup cronjob.
+
 Note! If you've created the cluster without workload identity, you will have to do a lot more shit, ie. recreate the node pool with the option enabled etc... Consult an LLM or similar for that.
+
+#### Scaling
+
+Scaling is essential for maintaining optimal performance and reliability in a system as demand fluctuates. It ensures that applications can handle varying loads efficiently, preventing downtime and maintaining user satisfaction.
+
+There are two primary types of scaling: horizontal scaling and vertical scaling. Vertical scaling involves increasing the resources available to a single pod or node, such as adding more CPU or memory. This approach enhances the capacity of individual units.
+
+Horizontal scaling, which is more commonly discussed, involves increasing the number of pods or nodes. This method distributes the load across multiple units, enhancing the system's ability to handle higher traffic and providing redundancy.
+
+Let's deploy a CPU heavy pod:
+
+```shell
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpushredder-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cpushredder
+  template:
+    metadata:
+      labels:
+        app: cpushredder
+    spec:
+      containers:
+        - name: cpushredder
+          image: jakousa/dwk-app7:e11a700350aede132b62d3b5fd63c05d6b976394
+          resources:
+            limits:
+              cpu: "150m"
+              memory: "100Mi"
+```
+
+The suffix of the CPU limit "m" stands for "thousandth of a core". Thus 150m equals 15% of a single CPU core (150/1000=0,15).
+
+```shell
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpushredder-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: cpushredder
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3001
+```
+
+HorizontalPodAutoscaler automatically scales pods horizontally. The yaml here defines what is the target Deployment, how many minimum replicas and what is the maximum replica count. The target CPU Utilization is defined as well. If the CPU utilization exceeds the target then an additional replica is created until the max number of replicas.
+
+```shell
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cpushredder-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cpushredder-dep
+  minReplicas: 1
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 50
+```
+
+Scaling nodes
+
+```shell
+$ gcloud container clusters update dwk-cluster --zone=europe-north1-b --enable-autoscaling --min-nodes=1 --max-nodes=5
+  Updated [https://container.googleapis.com/v1/projects/dwk-gke/zones/europe-north1-b/clusters/dwk-cluster].
+  To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/europe-north1-b/dwk-cluster?project=dwk-gke
+```
+
+To prevent pods jumping for node to node use PodDisruptionBudget
+
+```shell
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: example-app-pdb
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: example-app
+```

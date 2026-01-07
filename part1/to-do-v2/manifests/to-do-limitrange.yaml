@@ -1,0 +1,15 @@
+# Limits for pods in the "project" namespace (to-do application)
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: todo-limits
+  namespace: project
+spec:
+  limits:
+    - default:
+        cpu: 100m
+        memory: 128Mi
+      defaultRequest:
+        cpu: 10m
+        memory: 32Mi
+      type: Container
