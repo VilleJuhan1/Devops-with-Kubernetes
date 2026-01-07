@@ -1845,3 +1845,61 @@ spec:
                path: /healthz
                port: 3541
 ```
+
+#### Canary release
+
+With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough, and you need to be able to do a partial release for some users and get usage data and statistics for the upcoming release.
+
+Example
+
+```shell
+$ kubectl create namespace argo-rollouts
+$ kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+```
+
+```shell
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: flaky-update-dep
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: flaky-update
+  strategy:
+    canary:
+      steps:
+      - setWeight: 25
+      - pause:
+          duration: 30s
+      - setWeight: 50
+      - analysis:
+          templates:
+          - templateName: restart-rate
+      - pause:
+          duration: 30s
+  template:
+    metadata:
+      labels:
+        app: flaky-update
+    spec:
+      containers:
+        - name: flaky-update
+          image: mluukkai/dwk-app8:v1
+          readinessProbe:
+            initialDelaySeconds: 10 # Initial delay until the readiness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
+          livenessProbe:
+            initialDelaySeconds: 20 # Initial delay until the liveness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
+
+---
+# the service definition could be put here
+```

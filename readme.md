@@ -111,3 +111,11 @@ Logging enabled and reviewable in the Logs Explorer in Google Cloud Console:
 
 - [v.0.4.1. Readines probe](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.1)
 - [v.0.4.2. The project, step 21](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.2)
+
+#### Exercise 4.3. Prometheus
+
+The query for listing the pods created by StatefulSets:
+
+```promsql
+count(kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"})
+```
