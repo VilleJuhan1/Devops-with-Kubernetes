@@ -1662,3 +1662,45 @@ After creating the service account, create the authentication key:
 ```shell
 $ gcloud iam service-accounts keys create ./private-key.json --iam-account=github-actions@dwk-gke-331210.iam.gserviceaccount.com
 ```
+
+### [Part 3: GKE Features]
+
+#### Backing up the database in GKE
+
+Create a bucket
+
+```shell
+gsutil mb gs://todo-postgres-backups
+```
+
+Create a service account (Cluster)
+
+```shell
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pg-backup-sa
+  namespace: project
+  annotations:
+    iam.gke.io/gcp-service-account: pg-backup@PROJECT_ID.iam.gserviceaccount.com
+
+```
+
+Create the service account in gcloud and give it the required privileges
+
+```shell
+gcloud iam service-accounts create pg-backup
+
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:pg-backup@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin"
+
+
+gcloud iam service-accounts add-iam-policy-binding \
+  pg-backup@PROJECT_ID.iam.gserviceaccount.com \
+  --member="serviceAccount:PROJECT_ID.svc.id.goog[project/pg-backup-sa]" \
+  --role="roles/iam.workloadIdentityUser"
+
+```
+
+Note! If you've created the cluster without workload identity, you will have to do a lot more shit, ie. recreate the node pool with the option enabled etc... Consult an LLM or similar for that.

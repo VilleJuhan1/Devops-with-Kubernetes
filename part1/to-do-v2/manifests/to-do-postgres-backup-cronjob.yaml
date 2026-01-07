@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: project
+spec:
+  schedule: "0 0 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: pg-backup-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+              env:
+                - name: PGHOST
+                  value: postgres.project.svc.cluster.local
+                - name: PGPORT
+                  value: "5432"
+                - name: POSTGRES_DB
+                  value: tododb
+                - name: POSTGRES_USER
+                  value: appuser
+                - name: POSTGRES_PASSWORD # Password is sourced from a Kubernetes Secret for security.
+                  valueFrom:
+                    secretKeyRef:
+                      name: to-do-postgres-secret
+                      key: POSTGRES_PASSWORD
+                - name: BUCKET
+                  value: todo-postgres-backups
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -e
+                  TIMESTAMP=$(date +%Y-%m-%d_%H-%M)
+                  FILE=/tmp/todo-$TIMESTAMP.sql.gz
+
+                  echo "Installing PostgreSQL client..."
+                  apt-get update -y && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
+                  echo "Starting backup $TIMESTAMP"
+
+                  pg_dump \
+                    --format=custom \
+                    --no-owner \
+                    --no-acl \
+                    | gzip > $FILE
+
+                  echo "Uploading backup to GCS bucket $BUCKET"
+                  echo "Using service account: $(gcloud config get-value account)"
+                  gsutil cp $FILE gs://$BUCKET/
+
+                  echo "Backup completed"
