@@ -3,7 +3,18 @@ import todoService from "../services/todoService.js";
 
 const todosRouter = express.Router();
 
-// GET /api/todos - Fetch all todos
+// GET /api/todos/health - Check health of the todo service
+todosRouter.get("/health", async (req, res) => {
+  const healthStatus = await todoService.checkHealth();
+  req.log.info({ healthStatus }, "Health check status");
+  if (healthStatus.ok) {
+    res.status(200).json({ status: "OK" });
+  } else {
+    res.status(500).json({ status: "Unhealthy", details: healthStatus.details });
+  }
+});
+
+// GET / api / todos - Fetch all todos
 todosRouter.get("/", async (req, res) => {
   try {
     const todos = await todoService.getAllTodos();

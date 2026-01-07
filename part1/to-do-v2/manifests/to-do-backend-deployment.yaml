@@ -44,6 +44,24 @@ spec:
           volumeMounts:
             - name: assets-storage
               mountPath: /app/assets
+          # Pod is ready if it is connected to the database
+          readinessProbe:
+            httpGet:
+              path: /api/todos/health
+              port: 3005
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          # Pod is alive if the database connection is healthy
+          livenessProbe:
+            httpGet:
+              path: /api/todos/health
+              port: 3005
+            initialDelaySeconds: 30
+            periodSeconds: 60 # Check once in a minute
+            successThreshold: 1
+            failureThreshold: 3
       volumes:
         - name: assets-storage
           persistentVolumeClaim:

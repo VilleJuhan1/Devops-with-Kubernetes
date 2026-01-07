@@ -1811,3 +1811,37 @@ There are multiple update/deployment/release strategies. We will focus on two of
 - Canary release
 
 Both of these update strategies are designed to make sure that the application works during and after an update. Rather than updating every pod at the same time, the idea is to update the pods one at a time and confirm that the application works.
+
+Probes
+
+```shell
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaky-update-dep
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: flaky-update
+  template:
+    metadata:
+      labels:
+        app: flaky-update
+    spec:
+      containers:
+        - name: flaky-update
+          image: mluukkai/dwk-app8:v1
+          readinessProbe:
+            initialDelaySeconds: 10 # Initial delay until the readiness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
+          livenessProbe:
+            initialDelaySeconds: 20 # Initial delay until the liveness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
+```

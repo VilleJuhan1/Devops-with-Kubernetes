@@ -49,8 +49,21 @@ async function deleteAllTodos() {
   }
 }
 
+// Check the health of the database connection
+async function checkHealth() {
+  try {
+    await pool.query("SELECT 1");
+    logger.info("Database connection healthy");
+    return { ok: true };
+  } catch (err) {
+    logger.error({ err }, "Database connection unhealthy");
+    return { ok: false, details: err.message };
+  }
+}
+
 export default {
   getAllTodos,
   addTodo,
   deleteAllTodos,
+  checkHealth,
 };
