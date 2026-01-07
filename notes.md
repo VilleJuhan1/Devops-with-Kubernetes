@@ -1796,3 +1796,18 @@ spec:
     matchLabels:
       app: example-app
 ```
+
+### [Part 4: Summary](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-4/summary)
+
+When deploying running software in a maintained Kubernetes service, it really does get that easy. Vendor lock-in is a term commonly heard when talking about the cloud. In this section, we dived into GKE and the services Google offered us. As we saw here, we could migrate almost everything to Google Cloud, with Cloud SQL and monitoring as the prime examples.
+
+There's a case for and against vendor lock-in and you should evaluate whether to use a single cloud or possibly a multi-cloud strategy based on your needs. Nothing is preventing you from cherry-picking "the best" services from each provider. Often vendor lock-in doesn't show any negatives until after you're locked-in.
+
+## [Chapter 5 - GitOps and friends](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-5)
+
+There are multiple update/deployment/release strategies. We will focus on two of them:
+
+- Rolling update
+- Canary release
+
+Both of these update strategies are designed to make sure that the application works during and after an update. Rather than updating every pod at the same time, the idea is to update the pods one at a time and confirm that the application works.

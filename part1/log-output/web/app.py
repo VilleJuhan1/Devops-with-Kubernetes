@@ -55,6 +55,18 @@ def logs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Define a health check endpoint that checks the /pings endpoint of the pingpong service
+@app.route("/health", methods=["GET"])
+def health():
+    try:
+        response = requests.get(f"{os.getenv('PINGS_API')}/pings", timeout=2)
+        if response.status_code == 200:
+            return "Healthy", 200
+        else:
+            return "Unhealthy", 500
+    except requests.RequestException:
+        return "Unhealthy", 500
+
 @app.route("/", methods=["GET"])
 def index():
     return "Hello world! Access /logs to see the latest log entry.", 200

@@ -30,7 +30,7 @@ spec:
             - name: log-data
               mountPath: /log
         - name: log-response
-          image: villejuhan1/log-output:web-gc
+          image: villejuhan1/log-output:web-gc2
           imagePullPolicy: Always
           env:
             - name: PINGS_API
@@ -47,5 +47,12 @@ spec:
               mountPath: /log
             - name: log-output-configmap
               mountPath: /tmp
-            #- name: ping-pong-log-output-pv
-            #  mountPath: /shared
+          # We wan't the service to be available only when ping-pong is available, so we use built-in readiness probe
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3

@@ -21,7 +21,7 @@ metadata:
   name: ping-pong-postgres-svc
   namespace: exercises
 spec:
-  clusterIP: None
+  type: ClusterIP
   selector:
     app: ping-pong-postgres
   ports:
