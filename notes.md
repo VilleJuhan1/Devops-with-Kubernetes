@@ -1925,3 +1925,27 @@ spec:
             sum(kube_pod_container_status_restarts_total{namespace="default", container="flaky-update"} offset 2m)
           )
 ```
+
+Note: setWeight is a traffic value so if there is no ingress, it will skip every check under this.
+
+### [Part 2: Messaging systems](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-5/messaging-systems)
+
+Skip this for now.
+
+### [Part 3: GitOps](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-5/gitops)
+
+An average simple deployment pipeline includes the following steps:
+
+- Developer pushes modified code to a repository, such as GitHub.
+- This triggers a CI/CD service, like GitHub Actions, to start running.
+- The CI/CD service runs tests, builds an image, pushes the image to a registry, and deploys the new image, for example, to Kubernetes.
+
+This is called a push deployment. It is a descriptive name as everything is pushed forward by the previous step. There are some challenges with the push approach. For example, if we have a Kubernetes cluster that is unavailable for external connections i.e. the cluster on your local machine or any cluster we don't want to give outsiders access to. In those cases having CI/CD push the update to the cluster is not possible.
+
+In a pull configuration the setup is reversed. We can have the cluster, running anywhere, pull the new image and deploy it automatically. The new image will still be tested and built by the CI/CD. We simply relieve the CI/CD of the burden of deployment and move it to another system that is doing the pulling.
+
+Decoding argo password:
+
+```shell
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+```

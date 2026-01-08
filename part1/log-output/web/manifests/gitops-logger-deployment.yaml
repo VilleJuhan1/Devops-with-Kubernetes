@@ -1,0 +1,107 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: exercises
+  labels:
+    name: exercises
+---
+# ReferenceGrant to allow HTTPRoute in 'default' namespace to reference Service in 'exercises' namespace
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-default-gateway
+  namespace: exercises
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: default
+  to:
+    - group: ""
+      kind: Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: exercises
+  name: log-output-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: log-output
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8081
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ping-pong-log-output-volume # name of the volume claim, this will be used in the deployment
+  namespace: exercises
+spec:
+  storageClassName: ping-pong-log-output-pv # this is the name of the persistent volume we are claiming
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output-deployment
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      volumes: # Define volume
+        - name: log-data
+          emptyDir: {}
+        - name: log-output-configmap
+          configMap:
+            name: log-output-configmap
+        #- name: ping-pong-log-output-pv
+        #  persistentVolumeClaim:
+        #    claimName: ping-pong-log-output-volume
+      containers:
+        - name: logger
+          image: LOGGER/LOGGER
+          imagePullPolicy: Always
+          volumeMounts: # Mount volume
+            - name: log-data
+              mountPath: /log
+        - name: log-response
+          image: LOGGER/WEB
+          imagePullPolicy: Always
+          env:
+            - name: PINGS_API
+              value: "http://ping-pong-svc:80"
+            - name: LOG_PATH
+              value: "/log"
+            - name: CONFIG_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: log-output-configmap
+                  key: MESSAGE
+          volumeMounts: # Mount volume
+            - name: log-data
+              mountPath: /log
+            - name: log-output-configmap
+              mountPath: /tmp
+          # We wan't the service to be available only when ping-pong is available, so we use built-in readiness probe
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
