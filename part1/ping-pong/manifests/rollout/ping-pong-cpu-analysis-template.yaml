@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: ping-pong-namespace-cpu
+  namespace: exercises
+spec:
+  metrics:
+    - name: namespace-cpu-usage
+      interval: 10s
+      count: 10
+      failureLimit: 2
+      successCondition: result < 0.5 # tweak as needed
+      failureCondition: result >= 1.0
+      provider:
+        prometheus:
+          address: http://kube-prometheus-stack-1767-prometheus.prometheus.svc.cluster.local:9090
+          query: |
+            scalar(
+              sum(
+                rate(container_cpu_usage_seconds_total{
+                  namespace="exercises",
+                  container!="",
+                  image!=""
+                }[1m])
+              )
+            )

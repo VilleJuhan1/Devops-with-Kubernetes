@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: ping-pong
+  namespace: exercises
+spec:
+  replicas: 4
+  strategy:
+    canary:
+      steps:
+        - pause: { duration: 30s }
+        - analysis:
+            templates:
+              - templateName: ping-pong-namespace-cpu
+              - templateName: ping-pong-namespace-memory
+        - pause: { duration: 30s }
+  selector:
+    matchLabels:
+      app: ping-pong
+  template:
+    metadata:
+      annotations:
+        force-revision: "6" # <- Change this value to force a new revision for testing
+      labels:
+        app: ping-pong
+    spec:
+      containers:
+        - name: ping-pong
+          image: villejuhan1/ping-pong:postgres-gc # <- Use Postgres enabled image that supports both arm and amd64
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8085
+          env:
+            - name: DEV_MODE
+              # value: "true"
+              value: "false" # <- POST to /reset doesn't work with dev mode off
+            - name: DATABASE_HOST
+              value: ping-pong-postgres-svc
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: ping-pong-appdb
+            - name: DATABASE_USER
+              value: appuser
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ping-pong-postgres-secret
+                  key: POSTGRES_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3

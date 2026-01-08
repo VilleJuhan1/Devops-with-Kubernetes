@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: ping-pong-namespace-memory
+  namespace: exercises
+spec:
+  metrics:
+    - name: namespace-memory-usage
+      interval: 10s
+      count: 10
+      failureLimit: 1 # fail fast (for testing)
+      failureCondition: result >= 1048576000 # 100Mi should fail, 1Gi should pass
+      provider:
+        prometheus:
+          address: http://kube-prometheus-stack-1767-prometheus.prometheus.svc.cluster.local:9090
+          query: |
+            scalar(
+              sum(
+                container_memory_working_set_bytes{
+                  namespace="exercises",
+                  container!="",
+                  image!=""
+                }
+              )
+            )
