@@ -1,4 +1,5 @@
 name: Build and publish log-output web application
+# This workflow builds and publishes the log-output web application Docker image
 
 on:
   push:
@@ -21,7 +22,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # tag image with the GitHub SHA to get a unique tag
-      - name: Build and publish backend
+      - name: Build and publish frontend image
         run: |-
           cd part1/log-output/web
           docker build --tag "villejuhan1/log-output:web-$GITHUB_SHA" .
