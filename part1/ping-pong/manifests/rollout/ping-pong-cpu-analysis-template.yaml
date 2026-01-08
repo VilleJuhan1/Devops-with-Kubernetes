@@ -6,8 +6,8 @@ metadata:
 spec:
   metrics:
     - name: namespace-cpu-usage
-      interval: 10s
-      count: 10
+      interval: 60s
+      count: 5
       failureLimit: 2
       successCondition: result < 0.5 # tweak as needed
       failureCondition: result >= 1.0
