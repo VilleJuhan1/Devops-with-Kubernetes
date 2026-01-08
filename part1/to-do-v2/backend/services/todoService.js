@@ -61,9 +61,33 @@ async function checkHealth() {
   }
 }
 
+async function markTodoCompleted(todoId) {
+  try {
+    const result = await pool.query(
+      `UPDATE todos
+       SET completed = true
+       WHERE id = $1
+       RETURNING id, user_id, todo, completed`,
+      [todoId]
+    );
+
+    if (result.rowCount === 0) {
+      logger.warn({ todoId }, "Todo not found to mark as completed");
+      throw new Error("Todo not found");
+    }
+
+    logger.info({ todo: result.rows[0] }, "Marked todo as completed in DB");
+    return result.rows[0];
+  } catch (err) {
+    logger.error({ err, todoId }, "Error marking todo as completed in DB");
+    throw err;
+  }
+}
+
 export default {
   getAllTodos,
   addTodo,
+  markTodoCompleted,
   deleteAllTodos,
   checkHealth,
 };

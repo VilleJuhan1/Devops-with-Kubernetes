@@ -47,6 +47,19 @@ todosRouter.post("/", async (req, res) => {
   }
 });
 
+// POST /api/todos/:id
+todosRouter.post("/:id", async (req, res) => {
+  const todoId = req.params.id;
+  try {
+    const updatedTodo = await todoService.markTodoCompleted(todoId);
+    req.log.info({ todo: updatedTodo }, "Marked todo as completed");
+    res.json(updatedTodo);
+  } catch (err) {
+    req.log.error({ err, todoId }, "Failed to mark todo as completed");
+    res.status(500).json({ error: "Failed to mark todo as completed" });
+  }
+});
+
 // DELETE /api/todos - Delete all todos (development/testing only)
 todosRouter.delete("/", async (req, res) => {
   if (process.env.DEV_MODE !== "true") {

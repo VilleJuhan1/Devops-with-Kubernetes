@@ -21,14 +21,20 @@ function App() {
     await fetchTodos().then(setTodos);
   }
 
+  async function handleCompleted(id) {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: true } : todo
+    );
+    setTodos(updatedTodos);
+  }
+
   return (
     <div style={{ textAlign: 'left' }}>
       <h1>The Project app</h1>
       <RandomImage />
-      <h2>To do</h2>
       <TodoDelete onReset={handleReset} />
       <TodoForm onAdd={handleAdd} />
-      <TodoList todos={todos} />
+      <TodoList todos={todos} onCompleted={handleCompleted} />
     </div>
   );
 }
