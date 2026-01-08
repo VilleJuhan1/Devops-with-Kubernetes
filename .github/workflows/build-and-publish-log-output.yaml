@@ -23,7 +23,7 @@ jobs:
       # tag image with the GitHub SHA to get a unique tag
 
       - name: Change to the right directory
-        run: cd part1/log-output/web
+        run: cd /part1/log-output/web
 
       - name: Build and publish backend
         run: |-
