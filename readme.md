@@ -122,3 +122,6 @@ count(kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"})
 
 - [v.0.4.3. Prometheus](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.3)
 - [v.0.4.4. Your canary](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.4)
+- [v.0.4.5. The project, step 22](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.5)
+- v.0.4.6. The project, step 23 (Nada, skipped atleast for now)
+- [v.0.4.7. Baby steps to GitOps](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.7)
