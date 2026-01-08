@@ -21,12 +21,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # tag image with the GitHub SHA to get a unique tag
-
-      - name: Change to the right directory
-        run: cd part1/log-output/web
-
       - name: Build and publish backend
         run: |-
+          cd part1/log-output/web
           docker build --tag "villejuhan1/log-output:web-$GITHUB_SHA" .
           docker push "villejuhan1/log-output:web-$GITHUB_SHA"
 
@@ -34,7 +31,9 @@ jobs:
         uses: imranismail/setup-kustomize@v2
 
       - name: Use right image for web
-        run: kustomize edit set image LOGGER/WEB=villejuhan1/log-output:web-$GITHUB_SHA
+        run: |
+          cd part1/log-output/web
+          kustomize edit set image LOGGER/WEB=villejuhan1/log-output:web-$GITHUB_SHA
 
       #- name: Use right image for logger
       #  run: kustomize edit set image LOGGER/LOGGER=villejuhan1/log-output:logger-$GITHUB_SHA
@@ -42,5 +41,5 @@ jobs:
       - name: commit kustomization.yaml to GitHub
         uses: EndBug/add-and-commit@v9
         with:
-          add: "kustomization.yaml"
+          add: "part1/log-output/web/kustomization.yaml"
           message: New version released ${{ github.sha }}
