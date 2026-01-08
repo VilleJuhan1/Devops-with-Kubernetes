@@ -1,3 +1,4 @@
+# Moved here due to migration to GitOps
 name: Deploy To-do-v2 app to GKE
 
 on:
