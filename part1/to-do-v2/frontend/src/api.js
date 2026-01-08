@@ -16,6 +16,13 @@ export async function addTodo(todo) {
   return res.json();
 }
 
+export async function markTodoCompleted(id) {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "POST",
+  });
+  return res.json();
+}
+
 export async function deleteAllTodos() {
   const res = await fetch(API_URL, {
     method: "DELETE",

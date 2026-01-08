@@ -4,6 +4,7 @@ import { fetchTodos, deleteAllTodos } from './api.js';
 import TodoList from './components/TodoList.jsx';
 import TodoForm from './components/TodoForm.jsx';
 import TodoDelete from './components/TodoDelete.jsx';
+import { markTodoCompleted } from './api.js';
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -23,6 +24,7 @@ function App() {
 
   // Updates the completed status of a todo to the web app state
   async function handleCompleted(id) {
+    await markTodoCompleted(id);
     const updatedTodos = todos.map((todo) =>
       todo.id === id ? { ...todo, completed: true } : todo
     );

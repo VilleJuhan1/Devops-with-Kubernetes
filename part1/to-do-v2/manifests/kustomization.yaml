@@ -5,10 +5,14 @@ kind: Kustomization
 namespace: project
 
 resources:
-  - to-do-backend-deployment.yaml
-  - to-do-frontend-deployment.yaml
-  - to-do-frontend-svc.yaml
+- to-do-backend-deployment.yaml
+- to-do-frontend-deployment.yaml
+- to-do-frontend-svc.yaml
 
 images:
-  - name: to-do-backend
-  - name: to-do-frontend
+- name: to-do-backend
+  newName: villejuhan1/todo-backend
+  newTag: f542d84b5e2183da88bf6dc426a0447d05ae5eac
+- name: to-do-frontend
+  newName: villejuhan1/todo-frontend
+  newTag: f542d84b5e2183da88bf6dc426a0447d05ae5eac
