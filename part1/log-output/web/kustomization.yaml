@@ -1,13 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - manifests/gitops-logger-deployment.yaml
-images:
-  - name: LOGGER/WEB
-    newName: villejuhan1/log-output
+- manifests/gitops-logger-deployment.yaml
     # Tag will be set in GitHub Actions workflow
-    newTag: web
-  - name: LOGGER/LOGGER
-    newName: villejuhan1/log-output
     # This is a static image for now
-    newTag: logger-gc
+images:
+- name: LOGGER/LOGGER
+  newName: villejuhan1/log-output
+  newTag: logger-gc
+- name: LOGGER/WEB
+  newName: villejuhan1/log-output
+  newTag: web-9fcc25dea5ae3187a996210903d0f4b078771918
