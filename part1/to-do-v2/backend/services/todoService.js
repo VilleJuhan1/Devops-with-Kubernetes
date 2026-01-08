@@ -61,6 +61,7 @@ async function checkHealth() {
   }
 }
 
+// Mark a todo as completed in the database
 async function markTodoCompleted(todoId) {
   try {
     const result = await pool.query(

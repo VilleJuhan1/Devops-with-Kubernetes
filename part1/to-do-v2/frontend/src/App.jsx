@@ -21,6 +21,7 @@ function App() {
     await fetchTodos().then(setTodos);
   }
 
+  // Updates the completed status of a todo to the web app state
   async function handleCompleted(id) {
     const updatedTodos = todos.map((todo) =>
       todo.id === id ? { ...todo, completed: true } : todo

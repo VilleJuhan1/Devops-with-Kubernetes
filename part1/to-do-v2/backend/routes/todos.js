@@ -47,7 +47,7 @@ todosRouter.post("/", async (req, res) => {
   }
 });
 
-// POST /api/todos/:id
+// POST /api/todos/:id to mark a todo as completed
 todosRouter.post("/:id", async (req, res) => {
   const todoId = req.params.id;
   try {

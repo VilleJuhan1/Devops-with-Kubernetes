@@ -5,6 +5,7 @@ function TodoList({ todos = [], onCompleted }) {
     return null;
   }
 
+  // Separate todos into incomplete and completed
   const incompleteTodos = todos.filter((t) => !t.completed);
   const completedTodos = todos.filter((t) => t.completed);
 
