@@ -10,4 +10,4 @@ images:
   newTag: logger-gc
 - name: LOGGER/WEB
   newName: villejuhan1/log-output
-  newTag: web-9fcc25dea5ae3187a996210903d0f4b078771918
+  newTag: web-5314490e093f004abe015543fdfab253841074dc
