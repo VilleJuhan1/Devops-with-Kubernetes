@@ -1,0 +1,9 @@
+# Namespace for the staging environment
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: staging
+  labels:
+    name: staging
+---
+

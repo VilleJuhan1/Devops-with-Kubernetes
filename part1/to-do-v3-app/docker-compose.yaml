@@ -1,0 +1,39 @@
+# Docker Compose configuration for To-Do application with backend, frontend, and PostgreSQL services
+services:
+  to-do-backend-svc:
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    expose:
+      - "3005"
+    depends_on:
+      - to-do-postgres-svc
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - to-do-backend-svc
+
+  to-do-postgres-svc:
+    image: postgres:16
+    container_name: to-do-postgres-svc
+    environment:
+      POSTGRES_DB: tododb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: postgres # Kubernetes deployment uses a different secret, this is just for local testing
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d tododb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
