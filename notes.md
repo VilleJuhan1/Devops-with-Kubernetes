@@ -1949,3 +1949,171 @@ Decoding argo password:
 ```shell
 kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
 ```
+
+## [Chapter 6 - Under the hood](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-6/kubernetes-internals)
+
+Kubernetes Control Place is responsible for managing the Kubernetes cluster. It is the primary orchestrating component that ensures the cluster's desired state matches its actual state. The control plane makes global decisions about the cluster (such as scheduling), as well as detecting and responding to cluster events (such as starting up a new pod when a replica's field of a deployment is unsatisfied).
+
+The control plane consists of
+
+etcd
+
+- A key-value storage that Kubernetes uses to save all cluster data.
+  kube-scheduler
+- Decides on which node a Pod should be run on.
+  kube-controller-manager
+- Is responsible for and runs all of the controllers.
+  kube-apiserver
+- This exposes the Kubernetes Control Plane through an API
+
+Node components
+
+kubelet
+
+- Makes sure containers are running in a Pod
+  kube-proxy
+- Network proxy and maintainer of the network rules. Enables connections outside and inside the cluster, as well as Services to work as we've been using them.
+
+In addition to all of the previously mentioned, Kubernetes has Addons that use the same Kubernetes resources we've been using and extend Kubernetes. You can view which resources the addons have created in the kube-system namespace.
+
+```shell
+$ kubectl -n kube-system get all
+ NAME                                                            READY   STATUS    RESTARTS   AGE
+ pod/event-exporter-v0.2.5-599d65f456-vh4st                      2/2     Running   0          5h42m
+ pod/fluentd-gcp-scaler-bfd6cf8dd-kmk2x                          1/1     Running   0          5h42m
+ pod/fluentd-gcp-v3.1.1-9sl8g                                    2/2     Running   0          5h41m
+ pod/fluentd-gcp-v3.1.1-9wpqh                                    2/2     Running   0          5h41m
+ pod/fluentd-gcp-v3.1.1-fr48m                                    2/2     Running   0          5h41m
+ pod/heapster-gke-9588c9855-pc4wr                                3/3     Running   0          5h41m
+ pod/kube-dns-5995c95f64-m7k4j                                   4/4     Running   0          5h41m
+ pod/kube-dns-5995c95f64-rrjpx                                   4/4     Running   0          5h42m
+ pod/kube-dns-autoscaler-8687c64fc-xv6p6                         1/1     Running   0          5h41m
+ pod/kube-proxy-gke-dwk-cluster-default-pool-700eba89-j735       1/1     Running   0          5h41m
+ pod/kube-proxy-gke-dwk-cluster-default-pool-700eba89-mlht       1/1     Running   0          5h41m
+ pod/kube-proxy-gke-dwk-cluster-default-pool-700eba89-xss7       1/1     Running   0          5h41m
+ pod/l7-default-backend-8f479dd9-jbv9l                           1/1     Running   0          5h42m
+ pod/metrics-server-v0.3.1-5c6fbf777-lz2zh                       2/2     Running   0          5h41m
+ pod/prometheus-to-sd-jw9rs                                      2/2     Running   0          5h41m
+ pod/prometheus-to-sd-qkxvd                                      2/2     Running   0          5h41m
+ pod/prometheus-to-sd-z4ssv                                      2/2     Running   0          5h41m
+ pod/stackdriver-metadata-agent-cluster-level-5d8cd7b6bf-rfd8d   2/2     Running   0          5h41m
+
+ NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)         AGE
+ service/default-http-backend   NodePort    10.31.251.116   <none>        80:31581/TCP    5h42m
+ service/heapster               ClusterIP   10.31.247.145   <none>        80/TCP          5h42m
+ service/kube-dns               ClusterIP   10.31.240.10    <none>        53/UDP,53/TCP   5h42m
+ service/metrics-server         ClusterIP   10.31.249.74    <none>        443/TCP         5h42m
+
+ NAME                                      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                                              AGE
+ daemonset.apps/fluentd-gcp-v3.1.1         3         3         3       3            3           beta.kubernetes.io/fluentd-ds-ready=true,beta.kubernetes.io/os=linux       5h42m
+ daemonset.apps/metadata-proxy-v0.1        0         0         0       0            0           beta.kubernetes.io/metadata-proxy-ready=true,beta.kubernetes.io/os=linux   5h42m
+ daemonset.apps/nvidia-gpu-device-plugin   0         0         0       0            0           <none>                                                                     5h42m
+ daemonset.apps/prometheus-to-sd           3         3         3       3            3           beta.kubernetes.io/os=linux                                                5h42m
+
+ NAME                                                       READY   UP-TO-DATE   AVAILABLE   AGE
+ deployment.apps/event-exporter-v0.2.5                      1/1     1            1           5h42m
+ deployment.apps/fluentd-gcp-scaler                         1/1     1            1           5h42m
+ deployment.apps/heapster-gke                               1/1     1            1           5h42m
+ deployment.apps/kube-dns                                   2/2     2            2           5h42m
+ deployment.apps/kube-dns-autoscaler                        1/1     1            1           5h42m
+ deployment.apps/l7-default-backend                         1/1     1            1           5h42m
+ deployment.apps/metrics-server-v0.3.1                      1/1     1            1           5h42m
+ deployment.apps/stackdriver-metadata-agent-cluster-level   1/1     1            1           5h42m
+
+ NAME                                                                  DESIRED   CURRENT   READY   AGE
+ replicaset.apps/event-exporter-v0.2.5-599d65f456                      1         1         1       5h42m
+ replicaset.apps/fluentd-gcp-scaler-bfd6cf8dd                          1         1         1       5h42m
+ replicaset.apps/heapster-gke-58bf4cb5f5                               0         0         0       5h42m
+ replicaset.apps/heapster-gke-9588c9855                                1         1         1       5h41m
+ replicaset.apps/kube-dns-5995c95f64                                   2         2         2       5h42m
+ replicaset.apps/kube-dns-autoscaler-8687c64fc                         1         1         1       5h42m
+ replicaset.apps/l7-default-backend-8f479dd9                           1         1         1       5h42m
+ replicaset.apps/metrics-server-v0.3.1-5c6fbf777                       1         1         1       5h41m
+ replicaset.apps/metrics-server-v0.3.1-8559697b9c                      0         0         0       5h42m
+ replicaset.apps/stackdriver-metadata-agent-cluster-level-5d8cd7b6bf   1         1         1       5h41m
+ replicaset.apps/stackdriver-metadata-agent-cluster-level-7bd5ddd849   0         0         0       5h42m
+```
+
+### [Part 2: Custom Resource Definitions](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-6/custom-resource-definitions)
+
+```shell
+# resourcedefinition.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # name must match the spec fields below, and be in the form: <plural>.<group>
+  name: countdowns.stable.dwk
+spec:
+  # group name to use for REST API: /apis/<group>/<version>
+  group: stable.dwk
+  # either Namespaced or Cluster
+  scope: Namespaced
+  names:
+    # kind is normally the CamelCased singular type. Your resource manifests use this.
+    kind: Countdown
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: countdowns
+    # singular name to be used as an alias on the CLI and for display
+    singular: countdown
+    # shortNames allow shorter string to match your resource on the CLI
+    shortNames:
+    - cd
+  # list of versions supported by this CustomResourceDefinition
+  versions:
+    - name: v1
+      # Each version can be enabled/disabled by Served flag.
+      served: <strong>true</strong>
+      # One and only one version must be marked as the storage version.
+      storage: <strong>true</strong>
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                length:
+                  type: integer
+                delay:
+                  type: integer
+                image:
+                  type: string
+      additionalPrinterColumns:
+        - name: Length
+          type: integer
+          description: The length of the countdown
+          jsonPath: .spec.length
+        - name: Delay
+          type: integer
+          description: The length of time (ms) between executions
+          jsonPath: .spec.delay
+
+# countdown.yaml
+apiVersion: stable.dwk/v1
+kind: Countdown
+metadata:
+  name: doomsday
+spec:
+  length: 20
+  delay: 1200
+  image: jakousa/dwk-app10:sha-84d581d
+
+$ kubectl apply -f countdown.yaml
+  countdown.stable.dwk/doomsday created
+
+$ kubectl get cd
+  NAME        LENGTH   DELAY
+  doomsday    20       1200
+```
+
+### [Part 3: Service mesh](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-6/service-mesh)
+
+You'll hear quite often about a concept called Service Mesh. Service meshes are quite complex animals that provide a large feature set for apps. During previous chapters we have implemented a few features that service meshes would have offered out of the box.
+
+In the realm of microservices architecture, a service mesh is indeed a powerful tool that can streamline and enhance communication between services. It provides robust capabilities such as
+
+- securing communication
+- managing traffic, and
+- monitoring traffic by sending logs and metrics to observability tools like Prometheus.
+
+By using a service mesh like Istio, many of the functionalities that were manually implemented in previous chapters can be automated and optimized, potentially reducing complexity and overhead.

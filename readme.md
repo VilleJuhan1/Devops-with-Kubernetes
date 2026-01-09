@@ -126,3 +126,22 @@ count(kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"})
 - v.0.4.6. The project, step 23 (Nada, skipped atleast for now)
 - [v.0.4.7. Baby steps to GitOps](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.7)
 - [v.0.4.8. The project, step 24](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.8)
+- [v.0.4.9. The project, step 25](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.9)
+- [v.0.4.10. The project, the grande finale](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/4.10)
+
+### Part 5 (or six I guess)
+
+- v.0.5.1. DIY CRD & Controller (Skipped for now)
+- v.0.5.2. Getting started with Istio service mesh (Skipped for now)
+- v.0.5.3. Log app, the Service Mesh Edition (Skipped for now)
+- v.0.5.4. Wikipedia with init and sidecar (Skipped for now)
+
+#### Exercise 5.5. Platform comparison
+
+If you're not a huge enterprise with the required business case and resources, go with Rancher due to the following reasons:
+
+- You can have workloads in multiple environments and manage all of them from a single interface
+- You are not vendor locked to RHEL/IBM
+- Your CI/CD might already be using typical external tools and Openshift works more like a PaaS so you have to adjust to it
+- The cost of Rancher is way less, both the initial cost and the licence costs. Ofc. this also depends on your stack, but generally thinking.
+- Developers and administrators might be more used to vanilla Kubernetes and thus require less training

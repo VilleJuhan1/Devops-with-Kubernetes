@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wikipedia-server
+  namespace: wikipedia-with-sidecar
+  labels:
+    # LoadBalancer serves wikipedia-server app (all pods inside the deployment)
+    app: wikipedia-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wikipedia-server
+  template:
+    metadata:
+      labels:
+        app: wikipedia-server
+    spec:
+      volumes:
+        - name: www
+          emptyDir: {}
+      # Init container to fetch the Kubernetes Wikipedia page at startup and stores it in a shared volume
+      initContainers:
+        - name: fetch-kubernetes-page
+          image: curlimages/curl:8.3.0
+          command:
+            - sh
+            - -c
+            - |
+              echo "Fetching Kubernetes Wikipedia page..."
+              curl -sL https://en.wikipedia.org/wiki/Kubernetes -o /www/index.html
+          volumeMounts:
+            - name: www
+              mountPath: /www
+      # Main container serving the Wikipedia pages using nginx
+      containers:
+        - name: wikipedia-frontend
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: www
+              mountPath: /usr/share/nginx/html
+        # Sidecar container to periodically (every 5 to 15 minutes) fetch a random Wikipedia page and store it in the shared volume
+        - name: random-wiki-sidecar
+          image: curlimages/curl:8.3.0
+          # A simple loop to fetch a random Wikipedia page at random intervals between 5 to 15 minutes
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                SLEEP_TIME=$((RANDOM % 600 + 300)) # 5-15 minutes
+                echo "Sleeping for $SLEEP_TIME seconds..."
+                sleep $SLEEP_TIME
+                RANDOM_PAGE=$(curl -s -I https://en.wikipedia.org/wiki/Special:Random | grep -i location | awk '{print $2}' | tr -d '\r')
+                if [ -n "$RANDOM_PAGE" ]; then
+                  PAGE_NAME=$(basename "$RANDOM_PAGE")
+                  echo "Fetching random page $PAGE_NAME"
+                  curl -sL "$RANDOM_PAGE" -o /www/index.html
+                fi
+              done
+          volumeMounts:
+            - name: www
+              mountPath: /www
