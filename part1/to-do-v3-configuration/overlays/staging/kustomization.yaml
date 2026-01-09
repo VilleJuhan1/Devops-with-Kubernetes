@@ -5,12 +5,12 @@ kind: Kustomization
 namespace: staging
 
 resources:
-  - ./../../base
+- ./../../base
 
 images:
-  - name: to-do-backend
-    newName: villejuhan1/todo-backend
-    newTag: f542d84b5e2183da88bf6dc426a0447d05ae5eac
-  - name: to-do-frontend
-    newName: villejuhan1/todo-frontend
-    newTag: f542d84b5e2183da88bf6dc426a0447d05ae5eac
+- name: to-do-backend
+  newName: villejuhan1/todo-backend
+  newTag: b03b7a41bdb2531090ad1583ddf14db45b2fd222
+- name: to-do-frontend
+  newName: villejuhan1/todo-frontend
+  newTag: b03b7a41bdb2531090ad1583ddf14db45b2fd222
