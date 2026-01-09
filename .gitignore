@@ -17,3 +17,4 @@ part1/to-do-v3-app/backend/package-lock.json
 part1/to-do-v3-app/frontend/.env
 part1/to-do-v3-app/frontend/node_modules/
 part1/to-do-v3-configuration/overlays/staging/.sops.yaml
+part1/to-do-v3-configuration/overlays/prod/.sops.yaml

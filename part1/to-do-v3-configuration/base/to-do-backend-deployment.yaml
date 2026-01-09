@@ -28,7 +28,8 @@ spec:
     spec:
       containers:
         - name: to-do-backend
-          image: to-do-backend # <- Defined in the Kustomize file
+          #image: to-do-backend # <- Defined in the Kustomize file
+          image: villejuhan1/todo-backend:b89a3cc867a99f959201e12d275ca97b012c94be # Temporary hardcoded image for testing
           imagePullPolicy: Always
           ports:
             - containerPort: 3005
