@@ -1,0 +1,52 @@
+name: Build and publish to-do web application
+# This workflow builds and publishes the to-do web application using GitHub Actions and ArgoCD
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v4.8alpha*" # Only triggers on tags that start with v4.9alpha
+
+jobs:
+  build-publish:
+    name: Build, Push, Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # tag image with the GitHub SHA to get a unique tag
+      - name: Build images
+        run: |
+          docker build -t "villejuhan1/todo-backend:${{ github.sha }}" part1/to-do-v3-app/backend
+          docker build -t "villejuhan1/todo-frontend:${{ github.sha }}" part1/to-do-v3-app/frontend
+
+      - name: Push images
+        run: |
+          docker push "villejuhan1/todo-backend:${{ github.sha }}"
+          docker push "villejuhan1/todo-frontend:${{ github.sha }}"
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Change the image tags in kustomization.yaml
+        run: |
+          cd part1/to-do-v3-configuration/overlays/production
+
+          kustomize edit set image to-do-backend=villejuhan1/todo-backend:${{ github.sha }}
+          kustomize edit set image to-do-frontend=villejuhan1/todo-frontend:${{ github.sha }}
+
+      # Remember to pull the latest changes before committing
+      - name: commit kustomization.yaml to GitHub
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "part1/to-do-v3-configuration/overlays/production/kustomization.yaml"
+          message: New version released ${{ github.sha }}
