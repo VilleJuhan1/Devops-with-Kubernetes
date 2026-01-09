@@ -4,6 +4,7 @@ name: Build and publish to-do web application
 on:
   push:
     # Trigger the workflow only on pushes to the staging branch, deploy with ArgoCD afterwards
+    # The course exercise wanted to use the main branch, but as everything is in the same repo, using a separate one makes more sense, sorry.
     branches:
       - staging
 
