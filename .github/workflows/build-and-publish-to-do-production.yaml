@@ -39,7 +39,7 @@ jobs:
 
       - name: Change the image tags in kustomization.yaml
         run: |
-          cd part1/to-do-v3-configuration/overlays/production
+          cd part1/to-do-v3-configuration/overlays/prod
 
           kustomize edit set image to-do-backend=villejuhan1/todo-backend:${{ github.sha }}
           kustomize edit set image to-do-frontend=villejuhan1/todo-frontend:${{ github.sha }}
