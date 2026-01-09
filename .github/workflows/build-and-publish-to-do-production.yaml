@@ -6,7 +6,7 @@ on:
     branches:
       - main
     tags:
-      - "v4.9*" # Only triggers on tags that start with v4.9
+      - "v*" # Only triggers on tagged commits starting with "v"
 
 jobs:
   build-publish:
