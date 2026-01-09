@@ -6,7 +6,7 @@ on:
     branches:
       - main
     tags:
-      - "v4.8alpha*" # Only triggers on tags that start with v4.9alpha
+      - "v4.9alpha*" # Only triggers on tags that start with v4.9alpha
 
 jobs:
   build-publish:
