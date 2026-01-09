@@ -28,7 +28,8 @@ spec:
     spec:
       containers:
         - name: to-do-backend
-          image: to-do-backend # <- Defined in the Kustomize file
+          #image: to-do-backend # <- Defined in the Kustomize file
+          image: villejuhan1/todo-backend:b89a3cc867a99f959201e12d275ca97b012c94be # Temporary hardcoded image for testing
           imagePullPolicy: Always
           ports:
             - containerPort: 3005
@@ -39,7 +40,7 @@ spec:
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: to-do-postgres-secret
+                  name: postgres-secret
                   key: POSTGRES_PASSWORD
           volumeMounts:
             - name: assets-storage
@@ -65,7 +66,7 @@ spec:
       volumes:
         - name: assets-storage
           persistentVolumeClaim:
-            claimName: backend-assets-pvc
+            claimName: backend-assets
 ---
 apiVersion: v1
 kind: Service
