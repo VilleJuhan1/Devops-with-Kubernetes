@@ -3,7 +3,7 @@ name: Build and publish to-do web application
 
 on:
   push:
-    # I know the exercise said to use main branch, but to avoid conflicts with other exercises, we use to-do branch here
+    # Trigger the workflow only on pushes to the staging branch, deploy with ArgoCD afterwards
     branches:
       - staging
 
