@@ -7,3 +7,4 @@ resources:
   - ./to-do-frontend-deployment.yaml
   - ./to-do-frontend-loadbalancer.yaml
   - ./to-do-postgres-statefulset.yaml
+  - ./to-do-backend-volume.yaml

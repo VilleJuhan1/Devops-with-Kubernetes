@@ -65,7 +65,7 @@ spec:
       volumes:
         - name: assets-storage
           persistentVolumeClaim:
-            claimName: backend-assets-pvc
+            claimName: backend-assets
 ---
 apiVersion: v1
 kind: Service
