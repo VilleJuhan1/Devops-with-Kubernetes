@@ -145,3 +145,20 @@ If you're not a huge enterprise with the required business case and resources, g
 - Your CI/CD might already be using typical external tools and Openshift works more like a PaaS so you have to adjust to it
 - The cost of Rancher is way less, both the initial cost and the licence costs. Ofc. this also depends on your stack, but generally thinking.
 - Developers and administrators might be more used to vanilla Kubernetes and thus require less training
+
+- v.0.5.6. Trying serverless (Skipped for now)
+- v.0.5.7. Deploy to serverless (Skipped for now)
+
+#### Exercise 5.8. Landscape
+
+- I used Helm to install various components like Prometheus and Grafana
+- I used Argo for deploying/managing apps and doing canary rollouts
+- I’ve used Gitlab, MySQL, etcd, flannel, containerd, Hashicorp Vault, Ansible and fluentd outside this course.
+- I think I used flannel as part of the k3d cluster (L7 network), but didn't really touch it
+- I used Github Actions to both deploying to GKE and pushing new images to registry
+- I've used mongoDB on the previous web programming courses
+- I used PostgreSQL as the primary DB for this course
+- I used redis on this course, but can’t remember what for
+- I used Traefik as a component for local k3d Kubernetes deployment
+- I used Google persistent disk and Container registry via Google Cloud
+- I used Prometheus and Grafana for monitoring and logging in both local and cloud environments

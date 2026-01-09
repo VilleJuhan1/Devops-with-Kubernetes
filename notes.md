@@ -2117,3 +2117,7 @@ In the realm of microservices architecture, a service mesh is indeed a powerful 
 - monitoring traffic by sending logs and metrics to observability tools like Prometheus.
 
 By using a service mesh like Istio, many of the functionalities that were manually implemented in previous chapters can be automated and optimized, potentially reducing complexity and overhead.
+
+Comment: Couldn't get Istio working on a local cluster, will come back to it later, possibly.
+
+### [Part 4: Beyong Kubernetes](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes/chapter-6/beyond-kubernetes)
