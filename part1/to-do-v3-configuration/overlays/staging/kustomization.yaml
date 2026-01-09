@@ -10,7 +10,7 @@ resources:
 images:
 - name: to-do-backend
   newName: villejuhan1/todo-backend
-  newTag: 2c911c88240eb6a4f4ff821a34e461b9eb82f73a
+  newTag: c5e0de5f9368afab6c1e813549d74810fa340ef1
 - name: to-do-frontend
   newName: villejuhan1/todo-frontend
-  newTag: 2c911c88240eb6a4f4ff821a34e461b9eb82f73a
+  newTag: c5e0de5f9368afab6c1e813549d74810fa340ef1
