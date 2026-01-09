@@ -1,6 +1,8 @@
 # Devops with Kubernetes
 
-This repository contains my submissions to [MOOC Devops with Kubernetes](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes).
+This repository contains my submissions to [MOOC Devops with Kubernetes](https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes). The folder part1 contains also all the other parts. Due to Git and VScode mechanics I didn't want to change the directory name when progressing through the course. It's an unfortunate relic from the beginning of the course. Hopefully you can still find the code from within!
+
+As for now, this repository is in it's final state. I've submitted 50 exercises out of 55 as the topic was really interesting and I was aiming for the best possible grade. I wanted to do all of the exercises, but mainly due to time constraints had to settle for less. This course was one of the best I've done so far in my career path and I wholeheartedly recommend it for everyone interested. However as a disclaimer I must add that it will take time, a lot, to progress through it all. Atleast it did for me.
 
 ## k3d environment
 
@@ -146,7 +148,7 @@ If you're not a huge enterprise with the required business case and resources, g
 - The cost of Rancher is way less, both the initial cost and the licence costs. Ofc. this also depends on your stack, but generally thinking.
 - Developers and administrators might be more used to vanilla Kubernetes and thus require less training
 
-- v.0.5.6. Trying serverless (Skipped for now)
+- [v.0.5.6. Trying serverless](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/5.6)
 - v.0.5.7. Deploy to serverless (Skipped for now)
 
 #### Exercise 5.8. Landscape
