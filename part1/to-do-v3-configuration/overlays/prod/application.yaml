@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/VilleJuhan1/Devops-with-Kubernetes
-    targetRevision: v4.9
+    targetRevision: v4.9 # Use the appropriate tag for production
     path: part1/to-do-v3-configuration/overlays/prod
   destination:
     server: https://kubernetes.default.svc
@@ -27,7 +27,7 @@ spec:
 # git push origin main
 #
 ## Tag this commit
-# git tag -a v4.9 -m "Release version 1.0.0"
+# git tag -a v4.9 -m "Release version"
 # git push origin v4.9
 #
 ## When tag exists
