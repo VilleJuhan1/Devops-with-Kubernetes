@@ -1,0 +1,35 @@
+# Deploy with the following command using argoCD:
+# kubectl apply -n argocd -f application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: to-do-v3-production
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/VilleJuhan1/Devops-with-Kubernetes
+    targetRevision: v4.9
+    path: part1/to-do-v3-configuration/overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+# Use the following workflow:
+
+# Commit your changes to main
+# git checkout main
+# git add .
+# git commit -m "Update backend"
+# git push origin main
+#
+## Tag this commit
+# git tag -a v4.9 -m "Release version 1.0.0"
+# git push origin v4.9
+#
+## When tag exists
+# git tag -fa v4.9 -m "Updated release"
+# git push origin v4.9 --force
