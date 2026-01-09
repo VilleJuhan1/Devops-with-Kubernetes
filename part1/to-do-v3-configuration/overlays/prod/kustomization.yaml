@@ -5,14 +5,14 @@ kind: Kustomization
 namespace: production
 
 resources:
-  - ./../../base
-  - to-do-postgres-backup-cronjob.yaml
-  - to-do-postgres-backup-service-account.yaml
+- ./../../base
+- to-do-postgres-backup-cronjob.yaml
+- to-do-postgres-backup-service-account.yaml
 
 images:
-  - name: to-do-backend
-    newName: villejuhan1/todo-backend
-    newTag: 7304901f99bb397803b09aaadd9c1d460096c127
-  - name: to-do-frontend
-    newName: villejuhan1/todo-frontend
-    newTag: 7304901f99bb397803b09aaadd9c1d460096c127
+- name: to-do-backend
+  newName: villejuhan1/todo-backend
+  newTag: e55843f1c11168931b24ecb780b1172bdc224eb4
+- name: to-do-frontend
+  newName: villejuhan1/todo-frontend
+  newTag: e55843f1c11168931b24ecb780b1172bdc224eb4
