@@ -134,7 +134,7 @@ count(kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"})
 - v.0.5.1. DIY CRD & Controller (Skipped for now)
 - v.0.5.2. Getting started with Istio service mesh (Skipped for now)
 - v.0.5.3. Log app, the Service Mesh Edition (Skipped for now)
-- v.0.5.4. Wikipedia with init and sidecar (Skipped for now)
+- [v.0.5.4. Wikipedia with init and sidecar](https://github.com/VilleJuhan1/Devops-with-Kubernetes/tree/5.4)
 
 #### Exercise 5.5. Platform comparison
 
