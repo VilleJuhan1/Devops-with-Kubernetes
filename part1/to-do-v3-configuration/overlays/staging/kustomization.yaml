@@ -1,0 +1,16 @@
+# Used for to-do-v3 CI/CD pipeline in staging environment
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: staging
+
+resources:
+  - ./../../base
+
+images:
+  - name: to-do-backend
+    newName: villejuhan1/todo-backend
+    newTag: f542d84b5e2183da88bf6dc426a0447d05ae5eac
+  - name: to-do-frontend
+    newName: villejuhan1/todo-frontend
+    newTag: f542d84b5e2183da88bf6dc426a0447d05ae5eac

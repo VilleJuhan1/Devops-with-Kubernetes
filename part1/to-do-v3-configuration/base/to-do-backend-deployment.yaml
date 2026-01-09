@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: project
+data:
+  PORT: "3005"
+  IMAGE_PATH: "assets/random.jpg"
+  DATABASE_HOST: to-do-postgres-svc
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: tododb
+  DATABASE_USER: appuser
+  DEV_MODE: "true" # Used for development-specific configurations
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: to-do-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: to-do-backend
+  template:
+    metadata:
+      labels:
+        app: to-do-backend
+    spec:
+      containers:
+        - name: to-do-backend
+          image: to-do-backend # <- Defined in the Kustomize file
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3005
+          envFrom:
+            - configMapRef:
+                name: backend-config
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: to-do-postgres-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: assets-storage
+              mountPath: /app/assets
+          # Pod is ready if it is connected to the database
+          readinessProbe:
+            httpGet:
+              path: /api/todos/health
+              port: 3005
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          # Pod is alive if the database connection is healthy
+          livenessProbe:
+            httpGet:
+              path: /api/todos/health
+              port: 3005
+            initialDelaySeconds: 30
+            periodSeconds: 60 # Check once in a minute
+            successThreshold: 1
+            failureThreshold: 3
+      volumes:
+        - name: assets-storage
+          persistentVolumeClaim:
+            claimName: backend-assets-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: to-do-backend-svc
+spec:
+  selector:
+    app: to-do-backend
+  ports:
+    - protocol: TCP
+      port: 3005
+      targetPort: 3005
+  type: ClusterIP

@@ -1,0 +1,21 @@
+# Deploy with the following command using argoCD:
+# kubectl apply -n argocd -f application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: to-do-v3-staging
+  namespace: staging
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/VilleJuhan1/Devops-with-Kubernetes
+    branch: staging
+    path: part1/to-do-v3-configuration/overlays/staging
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

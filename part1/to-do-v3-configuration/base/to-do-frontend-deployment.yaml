@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: to-do-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: to-do-frontend
+  template:
+    metadata:
+      labels:
+        app: to-do-frontend
+    spec:
+      containers:
+        - name: to-do-frontend
+          image: to-do-frontend # <- Defined in the to-do-v2 kustomization file
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 20

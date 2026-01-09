@@ -5,7 +5,7 @@ on:
   push:
     # I know the exercise said to use main branch, but to avoid conflicts with other exercises, we use to-do branch here
     branches:
-      - to-do
+      - staging
 
 jobs:
   build-publish:
@@ -25,8 +25,8 @@ jobs:
       # tag image with the GitHub SHA to get a unique tag
       - name: Build images
         run: |
-          docker build -t "villejuhan1/todo-backend:${{ github.sha }}" part1/to-do-v2/backend
-          docker build -t "villejuhan1/todo-frontend:${{ github.sha }}" part1/to-do-v2/frontend
+          docker build -t "villejuhan1/todo-backend:${{ github.sha }}" part1/to-do-v3-app/backend
+          docker build -t "villejuhan1/todo-frontend:${{ github.sha }}" part1/to-do-v3-app/frontend
 
       - name: Push images
         run: |
@@ -38,7 +38,7 @@ jobs:
 
       - name: Change the image tags in kustomization.yaml
         run: |
-          cd part1/to-do-v2/manifests
+          cd part1/to-do-v3-configuration/overlays/staging
 
           kustomize edit set image to-do-backend=villejuhan1/todo-backend:${{ github.sha }}
           kustomize edit set image to-do-frontend=villejuhan1/todo-frontend:${{ github.sha }}
@@ -47,5 +47,5 @@ jobs:
       - name: commit kustomization.yaml to GitHub
         uses: EndBug/add-and-commit@v9
         with:
-          add: "part1/to-do-v2/manifests/kustomization.yaml"
+          add: "part1/to-do-v3-configuration/overlays/staging/kustomization.yaml"
           message: New version released ${{ github.sha }}

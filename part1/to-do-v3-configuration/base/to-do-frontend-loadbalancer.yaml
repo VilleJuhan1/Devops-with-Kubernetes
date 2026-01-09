@@ -1,0 +1,15 @@
+# LoadBalancer service for to-do-frontend in staging environment
+apiVersion: v1
+kind: Service
+metadata:
+  name: to-do-frontend-lb
+  annotations:
+    cloud.google.com/load-balancer-type: "External"
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app: to-do-frontend
+  ports:
+    - port: 80
+      targetPort: 80
